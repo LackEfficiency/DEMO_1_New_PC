@@ -69,8 +69,8 @@ class CardMove : View
             yield break; // 如果队列为空，则退出协程
         }
 
-        TileBattle tile = tiles.Dequeue();
-        Card nextCard = cardQueue.Dequeue();
+        TileBattle tile = tiles.Dequeue(); // 从队列中取出卡牌所在的格子
+        Card targetCard = cardQueue.Dequeue(); // 从队列中取出卡片
 
         // 计算移动目标位置 防止超出地图边界
         if (player == Player.Self)
@@ -140,7 +140,7 @@ class CardMove : View
         {
             Vector3 targetPosition = m_Map.GetPosition(target);
            // Debug.Log(targetPosition);
-            yield return StartCoroutine(MoveCard(nextCard, targetPosition));
+            yield return StartCoroutine(MoveCard(targetCard, targetPosition));
             //更新
             target.Card = tile.Card;
             tile.Card = null;

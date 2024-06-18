@@ -326,6 +326,7 @@ public class RoundModel : Model
         // 玩家战斗阶段逻辑
         // ...
         //第一步 移动所有的卡牌
+        //每张卡牌移动完都需要进行战斗阶段的判定
         MoveAllArgs e = new MoveAllArgs();
         e.player = Player.Self;
         SendEvent(Consts.E_MoveAll, e);
@@ -392,8 +393,13 @@ public class RoundModel : Model
     {
         // 敌人战斗阶段逻辑
         // ...
-
-        IsTurnRun = false; //回合自动结束
+        // 玩家战斗阶段逻辑
+        // ...
+        //第一步 移动所有的卡牌
+        //每张卡牌移动完都需要进行战斗阶段的判定
+        MoveAllArgs e = new MoveAllArgs();
+        e.player = Player.Enemy;
+        SendEvent(Consts.E_MoveAll, e);
 
         // 等待条件满足
         yield return new WaitWhile(() => IsEnemyBattlePhaseComplete());

@@ -43,7 +43,7 @@ public class Bandit : MonoBehaviour {
         else if (inputX < 0)
             transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
-        // PositionCHange
+        // PositionChange
         m_body2d.velocity = new Vector2(inputX * m_speed, m_body2d.velocity.y);
 
         //Set AirSpeed in animator

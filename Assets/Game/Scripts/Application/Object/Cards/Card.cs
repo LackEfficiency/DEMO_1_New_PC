@@ -76,7 +76,7 @@ public class Card: Reusable, IReusable
     #endregion
 
     #region 方法
-    public void PositionCHange(Card card)
+    public void PositionChange(Card card)
     {
 
     }
@@ -86,6 +86,7 @@ public class Card: Reusable, IReusable
         transform.position = dest;
     }
 
+    //移动逻辑, 平滑移动
     public void Move(Vector3 dest)
     {
         //获取当前位置
@@ -111,6 +112,7 @@ public class Card: Reusable, IReusable
     #endregion
 
     #region Unity回调
+    //
     private void Update()
     {
         if (IsCardMoving)
@@ -123,7 +125,7 @@ public class Card: Reusable, IReusable
     #region 事件回调
     public override void OnSpawn()
     {
-        this.CardPosistionChange += PositionCHange;
+        this.CardPosistionChange += PositionChange;
         this.PosState = false;
     }
 
