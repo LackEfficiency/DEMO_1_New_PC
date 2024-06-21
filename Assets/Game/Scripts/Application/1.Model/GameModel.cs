@@ -173,6 +173,8 @@ public class GameModel : Model //存储游戏数据
     }
 
     //复制卡牌
+    //防止引用传递
+    //战斗中需要对卡牌的数据进行修改，需要留存一份卡牌的原始数据
     public CardInfo CopyCard(int id)
     {
         CardInfo copyCard = new CardInfo(Cards[id].CardType, Cards[id].CardID, Cards[id].CardName, Cards[id].Cost);

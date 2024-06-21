@@ -14,7 +14,6 @@ public class UICard:View
     #endregion
 
     #region 字段
-    //Test Git
     //所有需要动态加载的卡牌要素
     public TextMeshProUGUI m_CardName;
     public TextMeshProUGUI m_Effect;

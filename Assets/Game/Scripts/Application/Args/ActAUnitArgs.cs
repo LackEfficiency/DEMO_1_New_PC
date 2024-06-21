@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class MoveAllArgs
+class ActAUnitArgs
 {
     public Player player;
+    public GameObject go;
 }
+

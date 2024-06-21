@@ -6,7 +6,7 @@ using UnityEngine;
 
 //疑似用不上 暂时找不到调用这个控制器的地方
 //但是不敢删除
-class MoveAUnitCommand : Controller
+class ActAUnitCommand : Controller
 {
     MapBattle m_Map;
     List<TileBattle> sortedTiles;
@@ -24,7 +24,7 @@ class MoveAUnitCommand : Controller
             }
         }
 
-        MoveAUnitArgs e =  data as MoveAUnitArgs;
+        ActAUnitArgs e =  data as ActAUnitArgs;
 
         // 获取排序后的格子列表
         GetTilesInOrder(e.player);
@@ -48,7 +48,8 @@ class MoveAUnitCommand : Controller
                 if (target != null)
                 {
                     Vector3 targetPosition = m_Map.GetPosition(target);
-                    card.Move(targetPosition);
+                    card.NextDes = targetPosition;
+                    card.Move();
                 }
             }
         }

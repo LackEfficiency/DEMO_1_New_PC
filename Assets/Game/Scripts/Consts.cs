@@ -72,8 +72,8 @@ public static class Consts
     public const string E_AddCardToEnemyHand = "E_AddCardToEnemyHand"; //AddCardToEnemyHandArgs
     public const string E_EnemySummon = "E_EnemySummon"; //EnemySummonArgs
     public const string E_CostReduce = "E_CostReduce"; //CostReduceArgs
-    public const string E_MoveAUnit = "E_MoveAUnit"; //MoveAUnitArgs
-    public const string E_MoveAll = "E_MoveAll"; //MoveAllArgs
+    public const string E_ActAUnit = "E_ActAUnit"; //ActAUnitArgs
+    public const string E_ActAll = "E_ActAll"; //ActAllArgs
 }
 
 

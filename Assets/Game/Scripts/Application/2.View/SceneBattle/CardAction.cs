@@ -2,10 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-class CardMove : View
+/// <summary>
+/// 该脚本用于整个战斗阶段中卡牌移动、攻击的逻辑处理
+/// 
+/// </summary>
+class CardAction : View
 {
     #region 常量
     #endregion
@@ -34,9 +39,16 @@ class CardMove : View
     #endregion
 
     #region 方法
+    //检测卡牌移动是否完成
     bool GetIsCardMoving(Card card)
     {
         return card.IsCardMoving;
+    }
+
+    //检测卡牌攻击是否完成
+    bool GetIsCardAttack(Card card)
+    {
+        return card.IsCardAttacking;
     }
 
     bool GetIsAllCardMoved(Player player)
@@ -52,14 +64,42 @@ class CardMove : View
         return true;
     }
 
-    //移动卡片
-    IEnumerator MoveCard(Card card, Vector3 targetPosition)
+    //移动卡片逻辑控制
+    IEnumerator MoveCard(Card card, Vector3 targetPosition) //传入被移动卡片和目标位置
     {
+        //动画控制
         card.IsCardMoving = true;
         card.NextDes = targetPosition;
         yield return new WaitWhile(() => GetIsCardMoving(card));
         Debug.Log("Card moved successfully.");
     }
+    
+    //卡片攻击逻辑控制
+    IEnumerator CardAttack(Card card, TileBattle targetTile) //传入需要进行攻击的卡牌以及卡牌所处的格子
+    {
+        //找到攻击目标
+        List<TileBattle> attackTargets = GetCardsBeAttacked(card, targetTile);
+        //一般而言，攻击目标只有一个，但是也有可能有多个，这里暂时只考虑一个攻击目标的情况
+        //TODO:多个攻击目标的情况
+        if (attackTargets.Count == 0)
+        {
+            Debug.Log("No target to attack.");
+            yield break;
+        }
+        
+        Card cardBeAttacked = attackTargets[0].Card.GetComponent<Card>();
+
+        //动画控制
+        card.IsCardAttacking = true;
+        card.Target = cardBeAttacked;
+
+        //获取攻击目标的位置和当前卡牌的位置
+        card.NextDes = m_Map.GetPosition(attackTargets[0]);
+        card.CurPos = m_Map.GetPosition(targetTile);
+        yield return new WaitWhile(() => GetIsCardAttack(card)); //等待攻击动画完成
+        Debug.Log("Card attacked successfully.");
+    } 
+                                  
 
     //从队列中移动卡牌
     private IEnumerator MoveNextCard()
@@ -72,11 +112,15 @@ class CardMove : View
         TileBattle tile = tiles.Dequeue(); // 从队列中取出卡牌所在的格子
         Card targetCard = cardQueue.Dequeue(); // 从队列中取出卡片
 
+        //获取移动距离
+        var monsterCardInfo = targetCard.GetComponent<UIUnitStatus>().CardInfo as MonsterCardInfo;
+        int moveRange = monsterCardInfo.MoveRange;
+
         // 计算移动目标位置 防止超出地图边界
         if (player == Player.Self)
-            targetX = Mathf.Min(tile.X + 2, MapBattle.ColumnCount - 1);
+            targetX = Mathf.Min(tile.X + moveRange, MapBattle.ColumnCount - 1);
         else
-            targetX = Mathf.Max(tile.X - 2, 0);
+            targetX = Mathf.Max(tile.X - moveRange, 0);
 
 
         //查看是否有敌方阻挡 如果没有阻挡 则完成循环不改变targetX的值
@@ -98,7 +142,7 @@ class CardMove : View
                 curX += 1;
             }
         }
-        else
+        else if (player == Player.Enemy)
         {
             int curX = tile.X - 1;
             while (curX >= targetX)
@@ -146,6 +190,9 @@ class CardMove : View
             tile.Card = null;
         }
 
+        //战斗阶段开始
+        yield return StartCoroutine(CardAttack(targetCard, tile));    
+
         StartCoroutine(MoveNextCard()); // 移动下一个卡片
     }
     #endregion
@@ -157,9 +204,10 @@ class CardMove : View
     public override void RegisterEvents()
     {
         AttentionEvents.Add(Consts.E_EnterScene);
-        AttentionEvents.Add(Consts.E_MoveAUnit);
-        AttentionEvents.Add(Consts.E_MoveAll);
+        AttentionEvents.Add(Consts.E_ActAUnit);
+        AttentionEvents.Add(Consts.E_ActAll);
     }
+
     public override void HandleEvent(string eventName, object data = null)
     {
         switch (eventName)
@@ -179,8 +227,8 @@ class CardMove : View
                 }
                 break;
 
-            case Consts.E_MoveAll:
-                MoveAllArgs e1 = data as MoveAllArgs;
+            case Consts.E_ActAll:
+                ActAllArgs e1 = data as ActAllArgs;
                 player = e1.player;
                 // 获取排序后的格子列表
                 List<TileBattle> sortedTiles = GetTilesInOrder(e1.player);
@@ -201,6 +249,7 @@ class CardMove : View
                     }
                 }
 
+                //移动卡片，协程的最开始入口
                 StartCoroutine(MoveNextCard()); 
                 break;
 
@@ -211,6 +260,8 @@ class CardMove : View
     #endregion
 
     #region 帮助方法
+    //对格子进行排序，返回排序后的格子列表
+    //按照玩家的不同，排序规则不同，该方法用于获取需要移动的卡片的顺序
     public List<TileBattle> GetTilesInOrder(Player player)
     {
         List<TileBattle> sortedTiles = new List<TileBattle>();
@@ -234,6 +285,64 @@ class CardMove : View
         }
         return sortedTiles;
     }
+
+    
+    public List<TileBattle> GetCardsBeAttacked(Card card, TileBattle tile) //传入需要攻击的卡牌和卡牌所在的格子
+    {
+        //通过卡牌所在的格子找到第一个存在攻击目标的格子
+        //根据Player的不同，攻击目标的搜索方式也不同
+        //返回攻击对象所处格子的列表
+
+        List<TileBattle> attackTarget = new List<TileBattle>();
+
+        //根据卡牌的攻击范围找到攻击目标
+        int i = 0;
+        //获取攻击范围
+        var monsterCardInfo = card.GetComponent<UIUnitStatus>().CardInfo as MonsterCardInfo;
+        int attackRange = monsterCardInfo.AttackRange;
+
+        if (player == Player.Self)
+        {       
+            //遍历格子，找到攻击目标
+            while (i + tile.X < MapBattle.ColumnCount)
+            {
+                TileBattle targetTile = m_Map.GetTile(tile.X + i, tile.Y);
+                if (targetTile.Card)
+                {
+                    Card targetCard = targetTile.Card.GetComponent<Card>();
+                    if (targetCard.Player == Player.Enemy)
+                    {
+                        attackTarget.Add(targetTile);
+                    }
+                }
+                i++;
+                if (i > attackRange)
+                    return attackTarget;
+            }
+        }
+        else if (player == Player.Enemy)
+        {
+            while (tile.X - i >= 0)
+            {
+                TileBattle targetTile = m_Map.GetTile(tile.X - i, tile.Y);
+                if (targetTile.Card)
+                {
+                    Card targetCard = targetTile.Card.GetComponent<Card>();
+                    if (targetCard.Player == Player.Self)
+                    {
+                        attackTarget.Add(targetTile);
+                    }
+                }
+                i++;
+                if (i > attackRange)
+                    return attackTarget;
+            }
+        }
+
+        return attackTarget;
+    }
     #endregion
+
+
 }
 

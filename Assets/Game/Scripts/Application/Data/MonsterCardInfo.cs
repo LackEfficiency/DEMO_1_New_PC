@@ -15,6 +15,8 @@ public class MonsterCardInfo : CardInfo
     int m_HP;
     int m_MaxHP;
     int m_Attack;
+    int m_AttackRange = 2;
+    int m_MoveRange = 2;    
 
     #endregion
 
@@ -30,6 +32,16 @@ public class MonsterCardInfo : CardInfo
     public int MaxHP
     {
         get => m_MaxHP;
+    }
+    public int AttackRange 
+    { 
+        get => m_AttackRange; 
+        set => m_AttackRange = value; 
+    }
+    public int MoveRange 
+    { 
+        get => m_MoveRange; 
+        set => m_MoveRange = value; 
     }
     #endregion
 
