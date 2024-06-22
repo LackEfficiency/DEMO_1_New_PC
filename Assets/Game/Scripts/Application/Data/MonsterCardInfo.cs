@@ -24,14 +24,17 @@ public class MonsterCardInfo : CardInfo
     public int HP
     {
         get => m_HP;
+        set => m_HP = value;
     }
     public int Attack
     {
-        get => m_Attack;
+        get => m_Attack; 
+        set => m_Attack = value;
     }
     public int MaxHP
     {
         get => m_MaxHP;
+        set => m_MaxHP = value;
     }
     public int AttackRange 
     { 

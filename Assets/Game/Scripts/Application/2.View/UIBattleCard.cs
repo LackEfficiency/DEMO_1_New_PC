@@ -53,7 +53,7 @@ public class UIBattleCard : View, IPointerDownHandler
             //TODO:  魔法卡的使用
 
         }
-        //Debug.Log("手牌点击:" + this.GetComponent<UICard>().CardInfo.CardName);
+        //Debug.Log("手牌点击:" + this.GetComponent<UICard>().MonsterCardInfo.CardName);
     }
     #endregion
 

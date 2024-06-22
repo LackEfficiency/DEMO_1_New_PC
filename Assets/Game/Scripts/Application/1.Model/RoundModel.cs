@@ -342,9 +342,9 @@ public class RoundModel : Model
 
         //第一步抽卡
         LoadEnemyHand();
-/*        foreach(CardInfo cardInfo in EnemyHandList)
+/*        foreach(MonsterCardInfo monsterCardInfo in EnemyHandList)
         {
-            Debug.Log(cardInfo.CardName);
+            Debug.Log(monsterCardInfo.CardName);
         }*/
 
         //第二步，所有卡牌cost减一

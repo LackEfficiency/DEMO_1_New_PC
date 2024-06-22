@@ -251,8 +251,8 @@ GameObject:
   - component: {fileID: 4110692713816387518}
   - component: {fileID: 428454627103773378}
   - component: {fileID: 4888808360784047255}
-  - component: {fileID: 2523902231018053374}
   - component: {fileID: 530668874452177119}
+  - component: {fileID: -4048996904504975427}
   m_Layer: 0
   m_Name: HeavyBandit
   m_TagString: Untagged
@@ -349,18 +349,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2523902231018053374
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5581214403388163820}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 859bcf1d829580a429ea2bce1ac8d9ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &530668874452177119
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -377,6 +365,19 @@ MonoBehaviour:
   m_Atk: {fileID: 1906104162708335492}
   m_HP: {fileID: 7877902296348444285}
   m_MaxHP: {fileID: 8197475289993299647}
+--- !u!114 &-4048996904504975427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5581214403388163820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1648094f69b76bb4b80221a9e207f2d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: 0
 --- !u!1 &6697938809455508050
 GameObject:
   m_ObjectHideFlags: 0

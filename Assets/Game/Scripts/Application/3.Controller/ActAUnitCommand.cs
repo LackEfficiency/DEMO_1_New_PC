@@ -37,7 +37,7 @@ class ActAUnitCommand : Controller
         // 遍历格子列表，移动符合条件的卡片
         foreach (TileBattle tile in sortedTiles)
         {
-            Card card = tile.Card?.GetComponent<Card>(); // 获取卡片组件
+            MonsterCard card = tile.Card?.GetComponent<Card>() as MonsterCard; // 获取卡片组件
             if (card != null && card.Player == e.player)
             {
                 // 计算移动目标位置

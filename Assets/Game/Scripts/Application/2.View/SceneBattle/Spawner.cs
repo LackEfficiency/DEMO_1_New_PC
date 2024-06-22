@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -59,17 +60,19 @@ public class Spawner : View
     {
         //TODO: 新建召唤对象
         GameObject go = Game.Instance.ObjectPool.Spawn("HeavyBandit", "prefabs/Character"); //新建召唤物对象
-        Card m_card = go.GetComponent<Card>();
+        MonsterCard m_card = go.GetComponent<MonsterCard>();
+
         m_card.CardPosistionChange += MoveFromField;
+        m_card.Dead += Card_Dead;
+        m_card.StatusChanged += UpdateStatus;
         m_card.Player = player;
+        m_card.MonsterCardInfo = cardInfo as MonsterCardInfo;
        
         Vector3 pos = m_Map.GetPosition(tile);
         m_card.transform.position = pos;
 
-        UIUnitStatus uIUnitStatus = go.GetComponent<UIUnitStatus>();
-        uIUnitStatus.CardInfo = cardInfo; //召唤对应的卡
-        uIUnitStatus.Show();
-        
+        //显示卡牌信息 每次状态变化时都需要更新
+        UpdateStatus(m_card);
 
         if (player == Player.Self) //如果是玩家 则朝向右
         {
@@ -91,6 +94,41 @@ public class Spawner : View
             RoundModel.EnemySummonList.Add(go);
         }
     }
+
+    void Card_Dead(Card card)
+    {
+        //从场上移除这张卡
+        if (card.player == Player.Self)
+        {
+            RoundModel.PlayerSummonList.Remove(card.gameObject);
+        }
+        else if (card.player == Player.Enemy)
+        {
+            RoundModel.EnemySummonList.Remove(card.gameObject);
+        }
+
+        //格子清空
+        foreach (TileBattle tile in m_Map.Grid)
+        {
+            if (tile.Card == card.gameObject)
+            {
+                tile.Card = null;
+            }
+        }   
+
+        //销毁卡牌
+        Game.Instance.ObjectPool.Unspawn(card.gameObject);
+        
+    }
+
+    //展示信息
+    public void UpdateStatus(MonsterCard card)
+    {
+        UIUnitStatus uIUnitStatus = card.GetComponent<UIUnitStatus>();
+        uIUnitStatus.CardInfo = card.MonsterCardInfo;
+        uIUnitStatus.Show();
+    }
+
     #endregion
 
     #region Unity回调
