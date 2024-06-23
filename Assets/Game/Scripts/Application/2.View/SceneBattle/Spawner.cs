@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+//管理卡牌的召唤   
 public class Spawner : View
 {
 
@@ -22,6 +23,8 @@ public class Spawner : View
     bool is_Summon = false;
 
     GameObject m_WaitingSummon = null;
+
+    Spell m_Spell = null;
     #endregion
 
     #region 属性
@@ -44,6 +47,8 @@ public class Spawner : View
     {
         get => gModel;
     }
+    public GameObject WaitingSummon { get => m_WaitingSummon; set => m_WaitingSummon = value; }
+    public bool Is_Summon { get => is_Summon; set => is_Summon = value; }
 
     #endregion
 
@@ -161,19 +166,26 @@ public class Spawner : View
                     m_Map = GetComponent<MapBattle>();
                     m_Map.LoadLevel(GameModel.PlayLevel);
 
+                    //获取法术控制视图
+                    m_Spell = GetComponent<Spell>();
+
                 }
                 break;
 
             case Consts.E_SummonCardRequest:
                 SummonCardRequestArgs e1 = data as SummonCardRequestArgs;
 
+                //切换类型 法术->召唤
+                m_Spell.Is_Spelling = false;
+                m_Spell.WaitingSpell = null;
+
                 //判断是否点击卡牌后重复点击卡牌而不是格子，is_Summon判断是否处于召唤过程中
-                if (is_Summon)
+                if (Is_Summon)
                 {
-                    m_WaitingSummon = e1.go;
+                    WaitingSummon = e1.go;
                     return;
                 }
-                is_Summon = true;
+                Is_Summon = true;
 
                 foreach (TileBattle tile in m_Map.Grid)
                 {
@@ -184,16 +196,27 @@ public class Spawner : View
                         GameObject SpawnPos = Game.Instance.ObjectPool.Spawn("Area", "prefabs/others");
                         SpawnPos.transform.position = m_pos;
                         tile.Data = SpawnPos;
+
+                        //至少找到一个格子可以放置时，允许放置
+                        if (WaitingSummon == null)
+                        {
+                            WaitingSummon = e1.go;
+                            //每次召唤时开始监听 完成召唤后回收监听
+                            m_Map.OnTileClick += Map_OnTileClick;
+                        }
                     }
                 }
-                m_WaitingSummon = e1.go;
-                //每次召唤时开始监听 完成召唤后回收监听
-                m_Map.OnTileClick += Map_OnTileClick;
                 break;
 
             case Consts.E_CancelSummon: //右键取消召唤
-                m_WaitingSummon = null;
-                is_Summon = false;
+
+                //重置召唤状态
+                WaitingSummon = null;
+                Is_Summon = false;
+
+                m_Spell.WaitingSpell = null;
+                m_Spell.Is_Spelling = false;
+
                 //取消召唤时也回收监听
                 m_Map.OnTileClick -= Map_OnTileClick;
                 foreach(TileBattle tile in m_Map.Grid)
@@ -209,19 +232,19 @@ public class Spawner : View
             case Consts.E_ConfirmSummon: //确认召唤
 
                 ConfirmSummonArgs e2 = data as ConfirmSummonArgs;
-                Summon(m_WaitingSummon.GetComponent<UICard>().CardInfo, e2.tile, Player.Self);
+                Summon(WaitingSummon.GetComponent<UICard>().CardInfo, e2.tile, Player.Self);
 
                 //销毁手牌中的卡
                 if (e2.player == Player.Self)
                 {
                     //手牌移除这张卡
-                    RoundModel.PlayerHandList.Remove(m_WaitingSummon);
+                    RoundModel.PlayerHandList.Remove(WaitingSummon);
 
                     //销毁实体
-                    m_WaitingSummon.GetComponent<Card>().PosState = true;
+                    WaitingSummon.GetComponent<Card>().PosState = true;
                  
                     //数据更新               
-                    m_WaitingSummon = null;
+                    WaitingSummon = null;
 
 
                 }
@@ -271,11 +294,10 @@ public class Spawner : View
             SendEvent(Consts.E_CancelSummon);
             return;
         }
-        if (tile.Card == null && tile.CanSetMe)
+        if (tile.Card == null && tile.CanSetMe && Is_Summon)
         {
-            //TODO: 召唤卡牌 
             ConfirmSummonArgs e1 = new ConfirmSummonArgs();
-            e1.tile = e.tile;
+            e1.tile = tile;
             e1.player = Player.Self;
             SendEvent(Consts.E_ConfirmSummon, e1);
             //完成召唤

@@ -2130,6 +2130,7 @@ GameObject:
   - component: {fileID: 1501497029}
   - component: {fileID: 1501497031}
   - component: {fileID: 1501497032}
+  - component: {fileID: 1501497033}
   m_Layer: 0
   m_Name: Map
   m_TagString: Untagged
@@ -2190,6 +2191,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1ae1128f834bef545a222ea74838d20e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AttentionEvents: []
+--- !u!114 &1501497033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1501497028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 952d9ef1a40dd114ba7b2a9fd9a85958, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   AttentionEvents: []

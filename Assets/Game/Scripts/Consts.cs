@@ -46,6 +46,7 @@ public static class Consts
     public const string V_ShowRound = "V_ShowRound";
     public const string V_BattleCard = "V_BattleCard";
     public const string V_Spawner = "V_Spawner";
+    public const string V_Spell = "V_Spell";    
     public const string V_UnitStatus = "V_UnitStatus";
     public const string V_ButtonBattle = "V_ButtonBattle";
     public const string V_CardMove = "V_CardMove";
@@ -74,6 +75,8 @@ public static class Consts
     public const string E_CostReduce = "E_CostReduce"; //CostReduceArgs
     public const string E_ActAUnit = "E_ActAUnit"; //ActAUnitArgs
     public const string E_ActAll = "E_ActAll"; //ActAllArgs
+    public const string E_UseSpellCardRequest = "E_UseSpellCardRequest"; //UseSpellCardRequestArgs  
+    public const string E_ConfirmSpell = "E_ConfirmSpell"; //ConfirmSpellArgs
 }
 
 
@@ -138,4 +141,15 @@ public enum Player
 {
     Self,
     Enemy,
+}
+
+//法术作用对象
+public enum SpellType
+{
+    Self,
+    Enemy,
+    Any,
+    FieldSelf,
+    FieldEnemy,
+    FieldAny,
 }

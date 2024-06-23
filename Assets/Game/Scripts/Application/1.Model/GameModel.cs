@@ -186,7 +186,7 @@ public class GameModel : Model //´æ´¢ÓÎÏ·Êý¾Ý
         else if (Cards[id].CardType == CardType.Spell)
         {
             var spellcard = Cards[id] as SpellCardInfo;
-            copyCard = new SpellCardInfo(spellcard.CardType, spellcard.CardID, spellcard.CardName, spellcard.Cost, spellcard.Effect);
+            copyCard = new SpellCardInfo(spellcard.CardType, spellcard.CardID, spellcard.CardName, spellcard.Cost, spellcard.Effect, spellcard.SpellType);
         }
         return copyCard;
     } 

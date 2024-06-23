@@ -67,8 +67,9 @@ public class UIStore : View
                 int id = int.Parse(rowArray[1]);
                 string name = rowArray[2];
                 string effect= rowArray[3];
-                int cost = int.Parse(rowArray[4]);
-                SpellCardInfo spellCard = new SpellCardInfo(CardType.Spell, id, name, cost, effect);
+                SpellType spellType = (SpellType)Enum.Parse(typeof(SpellType), rowArray[4]);
+                int cost = int.Parse(rowArray[5]);
+                SpellCardInfo spellCard = new SpellCardInfo(CardType.Spell, id, name, cost, effect, spellType);
 
                 GameModel.Cards.Add(spellCard);
             }

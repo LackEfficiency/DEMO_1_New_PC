@@ -85,9 +85,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3887666957545267734}
   - component: {fileID: 8552667533382309833}
-  - component: {fileID: 8684499695179876013}
   - component: {fileID: 3667994852544141881}
   - component: {fileID: 6096588586716023845}
+  - component: {fileID: -582133928489595253}
   m_Layer: 5
   m_Name: DeckCard
   m_TagString: Untagged
@@ -146,19 +146,6 @@ MonoBehaviour:
   m_Bg: {fileID: 2933310454878535914}
   m_Rim: {fileID: 7510393793837109958}
   m_Count: {fileID: 5484286450783655198}
---- !u!114 &8684499695179876013
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 732820378821658923}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6f6d83bfe995b144ad094ebcb3abb18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  zoomSize: 1.2
 --- !u!114 &3667994852544141881
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,6 +172,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 859bcf1d829580a429ea2bce1ac8d9ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: 0
+--- !u!114 &-582133928489595253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732820378821658923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e913e94958c249d448e506f82d964c13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  zoomSize: 1.2
 --- !u!1 &2167962236079862598
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+//管理卡牌的点击事件
 public class UIBattleCard : View, IPointerDownHandler
 {
     #region 常量
@@ -13,6 +14,7 @@ public class UIBattleCard : View, IPointerDownHandler
 
     #region 字段
     public CardStateBattle m_State = CardStateBattle.inHand;
+    RoundModel m_rModel = null;
     #endregion
 
     #region 属性
@@ -20,6 +22,8 @@ public class UIBattleCard : View, IPointerDownHandler
     {
         get { return Consts.V_BattleCard; }
     }
+
+    public RoundModel rModel { get => m_rModel; set => m_rModel = value; }
 
     #endregion
 
@@ -30,13 +34,21 @@ public class UIBattleCard : View, IPointerDownHandler
     #endregion
 
     #region 事件回调
+
     public override void HandleEvent(string eventName, object data = null)
     {
-
+   
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        rModel = GetModel<RoundModel>();
+        //只有在玩家行动阶段才能召唤或使用卡牌
+        if (rModel.GamePhase != GamePhase.PlayerAct)
+        {
+            return;
+        }
+
         //点击卡牌时发出召唤卡牌请求 
         UICard uIcard = this.GetComponent<UICard>();
         CardInfo cardInfo = uIcard.CardInfo;
@@ -50,7 +62,14 @@ public class UIBattleCard : View, IPointerDownHandler
                 e.player = Player.Self;
                 SendEvent(Consts.E_SummonCardRequest, e);
             }
-            //TODO:  魔法卡的使用
+            else if (cardInfo.m_CardType == CardType.Spell && m_State == CardStateBattle.inHand) //法术卡才能发送使用事件
+            {
+                UseSpellCardRequestArgs e = new UseSpellCardRequestArgs();
+                e.cardInfo = cardInfo;
+                e.go = this.gameObject;
+                e.player = Player.Self;
+                SendEvent(Consts.E_UseSpellCardRequest, e);
+            }
 
         }
         //Debug.Log("手牌点击:" + this.GetComponent<UICard>().MonsterCardInfo.CardName);

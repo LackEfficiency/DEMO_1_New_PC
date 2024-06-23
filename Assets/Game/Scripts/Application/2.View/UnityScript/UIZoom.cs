@@ -16,7 +16,7 @@ class UIZoom : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     #endregion
 
     #region 字段
-    public float zoomSize;
+    public float zoomSize = 1.2f;
     #endregion
 
     #region 属性

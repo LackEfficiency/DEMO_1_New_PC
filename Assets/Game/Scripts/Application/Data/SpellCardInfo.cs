@@ -13,6 +13,7 @@ public class SpellCardInfo : CardInfo
 
     #region 字段
     string m_Effect;
+    SpellType m_SpellType;
 
     #endregion
 
@@ -21,12 +22,17 @@ public class SpellCardInfo : CardInfo
     {
         get => m_Effect;
     }
+    public SpellType SpellType 
+    { 
+        get => m_SpellType; 
+    }
     #endregion
 
     #region 方法
-    public SpellCardInfo(CardType type, int id, string name, int turn, string effect) : base(type, id, name, turn)
+    public SpellCardInfo(CardType type, int id, string name, int turn, string effect, SpellType spellType) : base(type, id, name, turn)
     {
         m_Effect = effect;
+        m_SpellType = spellType;
     }
     #endregion
 
