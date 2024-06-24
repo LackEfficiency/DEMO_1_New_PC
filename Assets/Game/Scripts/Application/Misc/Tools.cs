@@ -130,6 +130,66 @@ public class Tools
         sw.Dispose();
     }
 
+    //读取卡牌数据
+    public static void LoadCardData(ref List<CardInfo> Cards)
+    {
+        //读取文件
+        TextAsset m_CardData = Resources.Load<TextAsset>(Consts.CardDataDir + "/CardList");
+
+        //拆分成多列
+        string[] dataRow = m_CardData.text.Split("\n");
+
+        //拆分列内内容
+        foreach (string row in dataRow)
+        {
+            string[] rowArray = row.Split(",");
+            if (rowArray[0] == "#")
+            {
+                continue;
+            }
+            else if (rowArray[0] == "monster")
+            {
+                //新建怪兽卡
+                int id = int.Parse(rowArray[1]);
+                string name = rowArray[2];
+                int atk = int.Parse(rowArray[3]);
+                int hp = int.Parse(rowArray[4]);
+                int cost = int.Parse(rowArray[5]);
+                MonsterCardInfo monsterCard = new MonsterCardInfo(CardType.Monster, id, name, cost, atk, hp);
+
+                Cards.Add(monsterCard);
+            }
+            else if (rowArray[0] == "spell")
+            {
+                //新建魔法卡
+                int id = int.Parse(rowArray[1]);
+                string name = rowArray[2];
+                string effect = rowArray[3];
+                SpellType spellType = (SpellType)Enum.Parse(typeof(SpellType), rowArray[4]);
+                int cost = int.Parse(rowArray[5]);
+                SpellCardInfo spellCard = new SpellCardInfo(CardType.Spell, id, name, cost, effect, spellType);
+
+                Cards.Add(spellCard);
+            }
+        }
+    }
+
+    //初始化效果字典
+    public static void LoadEffects(ref EffectManager effectManager)
+    {
+        //初始化所有法术
+        DamageEffect damageEffect = new DamageEffect(); 
+        damageEffect.EffectName = "Damage";
+        damageEffect.EffectDescription = "Change Hp, both positive and negative";
+        //添加更多
+
+
+        //添加到字典
+        effectManager.AddEffect(damageEffect);
+
+    }
+
+
     //加载图片
     public static IEnumerator LoadImage(string url, SpriteRenderer render)
     {

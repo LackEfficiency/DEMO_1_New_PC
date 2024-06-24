@@ -42,6 +42,7 @@ public class UIUnitStatus : View
         if (CardInfo is MonsterCardInfo)
         {
             var monsterInfo = CardInfo as MonsterCardInfo;
+
             m_Atk.text = monsterInfo.Attack.ToString();
             m_HP.text = monsterInfo.HP.ToString();
             m_MaxHP.text = "(" + monsterInfo.MaxHP.ToString() + ")";

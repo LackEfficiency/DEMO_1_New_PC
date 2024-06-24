@@ -29,3 +29,11 @@ Git使用
 在战斗中，对卡牌数据的修改都是通过复制一份原始数据，然后修改复制的数据，不会直接修改原始数据
 要修改卡牌数据时，对Card GameObject GetComponent<UIUnitStatus>().CardInfo进行修改
 如果需要获取卡牌原始数据，直接通过GameModel中的Cards列表获取即可
+
+关于效果的管理
+一、效果系统结构
+Effect Class (效果基类)：定义效果的基本属性和方法。
+具体效果类：继承自 Effect，实现具体效果。
+效果管理器：负责管理和调用效果。
+Spell.UsingEffect 方法：负责使用并应用效果。
+创建和初始化在GameModel.EffectManager中进行

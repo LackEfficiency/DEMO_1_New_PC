@@ -24,9 +24,17 @@ public class StartUpCommand : Controller
         //初始化
         GameModel gModel = GetModel<GameModel>();
         gModel.IsPlaying = true;
-        PlayerModel playerModel = GetModel<PlayerModel>();
+        PlayerModel pModel = GetModel<PlayerModel>();
+
         gModel.Initialize();
-        playerModel.Initialize();
+        pModel.Initialize();
+
+        //初始化playermodel所有卡牌的长度
+        pModel.m_Library = new int[gModel.CardCount];
+        pModel.m_Deck = new int[gModel.CardCount];
+
+        //初始化pm,从存档里加入
+        pModel.LoadFileData();
 
         //跳转到开始界面
         Game.Instance.LoadScene(1);

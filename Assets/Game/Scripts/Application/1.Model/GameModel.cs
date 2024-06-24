@@ -22,6 +22,9 @@ public class GameModel : Model //存储游戏数据
     //这里不需要使用字典 卡牌的位置索引即为实际的索引
     List<CardInfo> m_Cards = new List<CardInfo>();
 
+    //效果管理器
+    EffectManager m_EffectManager;
+
     //当前游戏的关卡索引
     int m_PlayLevelIndex = -1;
 
@@ -116,7 +119,11 @@ public class GameModel : Model //存储游戏数据
         set => m_CurrentSceneIndex = value; 
     }
 
-
+    public EffectManager EffectManager 
+    { 
+        get => m_EffectManager; 
+        set => m_EffectManager = value; 
+    }
 
     #endregion
 
@@ -136,6 +143,13 @@ public class GameModel : Model //存储游戏数据
 
         m_Levels = levels;
         //TODO: 读取游戏进度
+
+        //读取卡牌数据
+        Tools.LoadCardData(ref m_Cards);
+
+        //读取效果数据
+        m_EffectManager = new EffectManager();
+        Tools.LoadEffects(ref m_EffectManager);
 
     }
 
@@ -190,6 +204,8 @@ public class GameModel : Model //存储游戏数据
         }
         return copyCard;
     } 
+
+
     #endregion
 
     #region Unity回调

@@ -63,12 +63,36 @@ public class Spell : View
     #endregion
 
     #region 方法
-    #endregion
+    public void UsingSpell(SpellCardInfo spellCardInfo, TileBattle tileBattle, Player player)
+    {
+        //己方使用法术
+        if (player == Player.Self)
+        {
+            MonsterCard targetCard = tileBattle.Card.GetComponent<Card>() as MonsterCard;
+            //对法术描述按空格切片，得到法术的具体细节（效果，伤害值等）
+            string[] effectDetails = spellCardInfo.Effect.Split(' ');
+            //0是法术效果
+            string effectName = effectDetails[0];
+            //1是法术伤害值
+            int effectValue = int.Parse(effectDetails[1]);
+            //TODO:其余细节 例如法术的持续回合数等
 
-    #region Unity回调
-    #endregion
+            //根据法术效果进行处理
+            Effect effect = gModel.EffectManager.GetEffect(effectName);
+            effect.EffectValue = effectValue;
+            effect.Cast(targetCard);
 
-    #region 事件回调
+        }
+
+        //TODO:敌人使用法术
+    }
+
+        #endregion
+
+        #region Unity回调
+        #endregion
+
+        #region 事件回调
     public override void RegisterEvents()
     {
         AttentionEvents.Add(Consts.E_EnterScene); //为了获取当前map脚本，从而导入地图信息
@@ -199,6 +223,24 @@ public class Spell : View
                 break;
 
             case Consts.E_ConfirmSpell:
+
+                ConfirmSpellArgs e2 = data as ConfirmSpellArgs;
+                //使用法术
+                UsingSpell(WaitingSpell.GetComponent<UICard>().CardInfo as SpellCardInfo, e2.tile, e2.player);
+
+                //销毁手牌中的卡
+                if (e2.player == Player.Self)
+                {
+                    //手牌移除这张卡
+                    RoundModel.PlayerHandList.Remove(WaitingSpell);
+
+                    //销毁实体
+                    WaitingSpell.GetComponent<Card>().PosState = true;
+
+                    //数据更新               
+                    WaitingSpell = null;
+                }
+
                 break;
 
             default:

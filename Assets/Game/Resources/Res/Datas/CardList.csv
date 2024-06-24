@@ -4,5 +4,5 @@ monster,1,ghost,1,12,2
 monster,2,dog,3,5,2
 monster,3,caster,2,6,2
 #,编号,卡名,效果,类型,回合数
-spell,4,fireBall,Damage 20,Enemy,3
-spell,5,cure,Cure 40,Self,3
+spell,4,fireBall,Damage 4,Enemy,3
+spell,5,cure,Damage -4,Self,3

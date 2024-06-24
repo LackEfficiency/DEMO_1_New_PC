@@ -245,16 +245,6 @@ public class Spawner : View
                  
                     //数据更新               
                     WaitingSummon = null;
-
-
-                }
-                foreach (TileBattle tile in m_Map.Grid)
-                {
-                    if (tile.Data != null)
-                    {
-                        Game.Instance.ObjectPool.Unspawn(tile.Data as GameObject);
-                        tile.Data = null;
-                    }
                 }
                 break;
 
