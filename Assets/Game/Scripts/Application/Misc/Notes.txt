@@ -37,3 +37,23 @@ Effect Class (效果基类)：定义效果的基本属性和方法。
 效果管理器：负责管理和调用效果。
 Spell.UsingEffect 方法：负责使用并应用效果。
 创建和初始化在GameModel.EffectManager中进行
+
+关于Buff系统的管理
+系统工作流程
+
+添加 BUFF：
+使用 BuffManager.AddBuffToCard 方法为角色添加 BUFF，创建 BUFF 实例并应用到角色。
+
+角色执行行为：
+角色执行行为（如攻击、移动）时，触发相应事件（如 OnAttack）。
+BuffManager.TriggerEvent 方法通知所有 BUFF 实例处理该事件（如果需要）。
+
+角色行动完成：
+角色每次行动完成时，触发 OnActionFinish 事件。
+BuffManager.OnActionFinish 方法更新角色的所有 BUFF 实例的状态：
+调用 BuffInstance.OnActionFinish 更新 BUFF 效果。
+减少 BUFF 实例的剩余持续时间。
+移除到期的 BUFF 实例，并撤销其累计效果。
+
+移除 BUFF：
+当 BUFF 实例的持续时间到期时，BuffManager 调用 BuffInstance.Remove 移除 BUFF，并从角色的 BUFF 列表中删除。

@@ -113,8 +113,7 @@ class CardAction : View
         MonsterCard targetCard = cardQueue.Dequeue(); // 从队列中取出卡片
 
         //获取移动距离
-        var monsterCardInfo = targetCard.GetComponent<UIUnitStatus>().CardInfo as MonsterCardInfo;
-        int moveRange = monsterCardInfo.MoveRange;
+        int moveRange = targetCard.MoveRange;
 
         // 计算移动目标最远位置 防止超出地图边界
         if (player == Player.Self)
@@ -305,8 +304,7 @@ class CardAction : View
         //根据卡牌的攻击范围找到攻击目标
         int i = 1;
         //获取攻击范围
-        var monsterCardInfo = card.MonsterCardInfo;
-        int attackRange = monsterCardInfo.AttackRange;
+        int attackRange = card.AttackRange;
 
         if (player == Player.Self)
         {       

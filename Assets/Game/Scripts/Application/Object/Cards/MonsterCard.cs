@@ -15,6 +15,15 @@ public class MonsterCard : Card
     #region 事件
     public event Action<MonsterCard> StatusChanged; //状态更新
     public event Action<Card> Dead; //死亡
+
+    //各类行为 用于BUFF更新
+    public event Action<MonsterCard> OnMove;
+    public event Action<MonsterCard> OnAttack;
+    public event Action<MonsterCard> OnDamage;
+    public event Action<MonsterCard> OnDie;
+    public event Action<MonsterCard> OnTakeDamage;
+    public event Action<MonsterCard> OnTakeHeal;
+    public event Action<MonsterCard> OnActionFinish;
     #endregion
 
     #region 字段
@@ -28,31 +37,60 @@ public class MonsterCard : Card
 
     private MonsterCardInfo monsterCardInfo; //卡牌信息
 
+    //基本属性
+    private int m_BaseAttack; //基础攻击力
+    private int m_Hp; //基础血量
+    private int m_MaxHp; //最大血量
+    private int m_MoveRange; //移动范围
+    private int m_AttackRange; //攻击范围
+
+    private int m_AttackBoost; //攻击力增加
+    private int m_MaxHpBoost; //最大生命值增加
+
     #endregion
 
     #region 属性
     //卡牌血量是否发生变化
     public int Hp
     {
-        get => monsterCardInfo.HP;
+        get => m_Hp;
         set
         {
             //范围约定
-            value = Mathf.Clamp(value, 0, monsterCardInfo.MaxHP);
+            value = Mathf.Clamp(value, 0, MaxHp + MaxHpBoost);
 
             //减少重复，提高性能
-            if (value == monsterCardInfo.HP)
+            if (value == m_Hp)
                 return;
 
+            //受伤事件
+            if (value < m_Hp)
+            {
+                if (OnTakeDamage != null)
+                {
+                    OnTakeDamage(this);
+                }
+            }
+
+            //治疗事件
+            if (value > m_Hp)
+            {
+                if (OnTakeHeal != null)
+                {
+                    OnTakeHeal(this);
+                }
+            }
+
             //赋值
-            monsterCardInfo.HP = value;
+            m_Hp = value;
 
             //血量变化事件 
             if (StatusChanged != null)
                 StatusChanged(this);
 
+
             //死亡事件
-            if (monsterCardInfo.HP == 0)
+            if (m_Hp == 0)
             {
                 if (Dead != null)
                 {
@@ -63,10 +101,16 @@ public class MonsterCard : Card
         }
     }
 
+    //卡牌攻击力
+    public int TotalAttack
+    {
+        get => Math.Max(0, BaseAttack + AttackBoost);
+    }
+
     //卡牌是否死亡
     public bool IsDead
     {
-        get { return monsterCardInfo.HP == 0; }
+        get { return m_Hp == 0; }
     }
 
     //卡牌是否正在移动
@@ -118,10 +162,29 @@ public class MonsterCard : Card
         set => monsterCardInfo = value;
     }
 
+    public int AttackBoost { get => AttackBoost1; set => AttackBoost1 = value; }
+    public int BaseAttack { get => m_BaseAttack; set => m_BaseAttack = value; }
+    public int MaxHp { get => m_MaxHp; set => m_MaxHp = value; }
+    public int MoveRange { get => m_MoveRange; set => m_MoveRange = value; }
+    public int AttackRange { get => m_AttackRange; set => m_AttackRange = value; }
+    public int AttackBoost1 { get => m_AttackBoost; set => m_AttackBoost = value; }
+    public int MaxHpBoost { get => m_MaxHpBoost; set => m_MaxHpBoost = value; }
+
+
 
     #endregion
 
     #region 方法
+    //刷新属性
+    public void UpdateStats()
+    {
+        this.BaseAttack = MonsterCardInfo.Attack;
+        this.MaxHp = MonsterCardInfo.MaxHP;
+        this.m_Hp = MonsterCardInfo.HP;
+        this.MoveRange = MonsterCardInfo.MoveRange;
+        this.AttackRange = MonsterCardInfo.AttackRange;
+    }
+
     //移动到目标位置
     void MoveTo(Vector3 dest)
     {
@@ -141,6 +204,12 @@ public class MonsterCard : Card
         {
             MoveTo(NextDes);
             IsCardMoving = false;
+
+            //移动完毕事件
+            if (OnMove != null)
+            {
+                OnMove(this);
+            }
         }
         else
         {
@@ -176,7 +245,25 @@ public class MonsterCard : Card
                 IsCardAttacking = false;
                 IsCardReturn = false;
                 //被攻击的卡牌减血
-                target.Damage(monsterCardInfo.Attack);
+                target.Damage(TotalAttack);
+
+                //攻击事件
+                if (OnAttack != null)
+                {
+                    OnAttack(this);
+                }
+
+                //攻击造成伤害事件
+                if (OnDamage != null)
+                {
+                    OnDamage(this);
+                }
+
+                //行动完毕事件
+                if (OnActionFinish != null)
+                {
+                    OnActionFinish(this);
+                }
 
             }
             else
@@ -213,6 +300,22 @@ public class MonsterCard : Card
         Debug.Log(monsterCardInfo.CardName.ToString() + ":Die");
     }
 
+    //攻击力增加
+    public void IncreaseDamage(int value)
+    {
+        if (value == 0) return;
+
+        this.AttackBoost += value;
+        if (StatusChanged != null)
+            StatusChanged(this);
+    }
+
+    //最大生命值增加
+    public void IncreaseMaxHp(int value)
+    {
+        this.MaxHpBoost += value;
+        this.Hp += value;
+    }
     #endregion
 
     #region Unity回调
@@ -236,9 +339,11 @@ public class MonsterCard : Card
     public override void OnSpawn()
     {
         base.OnSpawn();
-        this.MonsterCardInfo = this.GetComponent<UIUnitStatus>().CardInfo as MonsterCardInfo;
         this.Dead += Die;
         this.StatusChanged += StatusChanged;
+
+        //初始化额外攻击力
+        this.AttackBoost = 0;
     }
 
     public override void OnUnspawn()
@@ -254,6 +359,45 @@ public class MonsterCard : Card
         {
             Dead -= Dead;
         }
+
+        this.BaseAttack = 0;
+        this.MaxHp = 0;
+        this.Hp = 0;
+        this.MoveRange = 0;
+        this.AttackRange = 0;
+
+
+        this.AttackBoost = 0;
+
+        while (OnMove != null)
+        {
+            OnMove -= OnMove;
+        }   
+        while (OnAttack != null)
+        {
+            OnAttack -= OnAttack;
+        }   
+        while (OnDamage != null)
+        {
+            OnDamage -= OnDamage;
+        }
+        while (OnDie != null)
+        {
+            OnDie -= OnDie;
+        }
+        while (OnTakeDamage != null)
+        {
+            OnTakeDamage -= OnTakeDamage;
+        }
+        while (OnTakeHeal != null)
+        {
+            OnTakeHeal -= OnTakeHeal;
+        }
+        while (OnActionFinish != null)
+        {
+            OnActionFinish -= OnActionFinish;
+        }
+   
     }
     #endregion
 

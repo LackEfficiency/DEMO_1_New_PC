@@ -189,6 +189,18 @@ public class Tools
 
     }
 
+    //初始化Buff字典
+    public static void LoadBuffs(ref BuffManager buffManager)
+    {
+        //初始化所有Buff
+        BuffAtkIncreByDmg buffAtkIncreByDmg1 = new BuffAtkIncreByDmg("Brave1", 10, true, 1);
+
+        //添加更多
+
+        //添加到字典
+        buffManager.AddBuff(buffAtkIncreByDmg1);
+    }
+
 
     //加载图片
     public static IEnumerator LoadImage(string url, SpriteRenderer render)

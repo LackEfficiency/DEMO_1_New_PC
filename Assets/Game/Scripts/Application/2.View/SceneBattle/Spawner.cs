@@ -67,12 +67,24 @@ public class Spawner : View
         GameObject go = Game.Instance.ObjectPool.Spawn("HeavyBandit", "prefabs/Character"); //新建召唤物对象
         MonsterCard m_card = go.GetComponent<MonsterCard>();
 
+        m_card.MonsterCardInfo = cardInfo as MonsterCardInfo;
+        //每次召唤时更新状态
+        m_card.UpdateStats();
         m_card.CardPosistionChange += MoveFromField;
         m_card.Dead += Card_Dead;
         m_card.StatusChanged += UpdateStatus;
         m_card.Player = player;
-        m_card.MonsterCardInfo = cardInfo as MonsterCardInfo;
-       
+
+        //订阅Buff事件
+        m_card.OnAttack += (MonsterCard) => gModel.BuffManager.TriggerEvent(m_card, BuffEvent.OnAttack);
+        m_card.OnTakeDamage += (MonsterCard) => gModel.BuffManager.TriggerEvent(m_card, BuffEvent.OnTakeDamage);
+        m_card.OnActionFinish += (MonsterCard) => gModel.BuffManager.TriggerEvent(m_card, BuffEvent.OnActionFinish);
+        m_card.OnDie += (MonsterCard) => gModel.BuffManager.TriggerEvent(m_card, BuffEvent.OnDie);
+        m_card.OnMove += (MonsterCard) => gModel.BuffManager.TriggerEvent(m_card, BuffEvent.OnMove);
+        m_card.OnTakeHeal += (MonsterCard) => gModel.BuffManager.TriggerEvent(m_card, BuffEvent.OnTakeHeal);
+        m_card.OnActionFinish += (MonsterCard) => gModel.BuffManager.OnActionFinish(m_card);
+
+
         Vector3 pos = m_Map.GetPosition(tile);
         m_card.transform.position = pos;
 
@@ -98,6 +110,11 @@ public class Spawner : View
         {
             RoundModel.EnemySummonList.Add(go);
         }
+    }
+
+    private void M_card_OnActionFinish(MonsterCard obj)
+    {
+        throw new NotImplementedException();
     }
 
     void Card_Dead(Card card)
@@ -130,7 +147,7 @@ public class Spawner : View
     public void UpdateStatus(MonsterCard card)
     {
         UIUnitStatus uIUnitStatus = card.GetComponent<UIUnitStatus>();
-        uIUnitStatus.CardInfo = card.MonsterCardInfo;
+        uIUnitStatus.Card = card;
         uIUnitStatus.Show();
     }
 

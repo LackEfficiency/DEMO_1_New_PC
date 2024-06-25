@@ -18,7 +18,7 @@ public class UIUnitStatus : View
     public TextMeshProUGUI m_Atk;
     public TextMeshProUGUI m_HP;
     public TextMeshProUGUI m_MaxHP;
-    private CardInfo cardInfo;
+    private Card m_Card;
     #endregion
 
     #region 属性
@@ -27,10 +27,10 @@ public class UIUnitStatus : View
         get { return Consts.V_UnitStatus; }
     }
 
-    public CardInfo CardInfo
+    public Card Card
     {
-        get => cardInfo;
-        set => cardInfo = value;
+        get => m_Card;
+        set => m_Card = value;
     }
 
     #endregion
@@ -39,13 +39,39 @@ public class UIUnitStatus : View
     //展示当前角色
     public void Show()
     {
-        if (CardInfo is MonsterCardInfo)
+        if (Card is MonsterCard)
         {
-            var monsterInfo = CardInfo as MonsterCardInfo;
+            var monsterCard = Card as MonsterCard;
 
-            m_Atk.text = monsterInfo.Attack.ToString();
-            m_HP.text = monsterInfo.HP.ToString();
-            m_MaxHP.text = "(" + monsterInfo.MaxHP.ToString() + ")";
+            //展示属性
+            int totalAttack = Math.Max(0, monsterCard.BaseAttack + monsterCard.AttackBoost);
+            m_Atk.text = totalAttack.ToString();
+
+            //根据额外攻击力的正负，显示颜色
+            if (monsterCard.AttackBoost > 0)
+            {
+                m_Atk.color = Color.green;
+            }
+            else if (monsterCard.AttackBoost < 0)
+            {
+                m_HP.color = Color.red;
+            }
+
+            m_HP.text = monsterCard.Hp.ToString();
+
+            //根据额外生命值的正负，显示颜色
+            int totalHp = Math.Max(0, monsterCard.MaxHp + monsterCard.MaxHpBoost);
+            m_MaxHP.text = "(" + totalHp.ToString() + ")";
+            //根据额外生命值的正负，显示颜色
+            if (monsterCard.MaxHpBoost > 0)
+            {
+                m_MaxHP.color = Color.green;
+            }
+            else if (monsterCard.MaxHpBoost < 0)
+            {
+                m_MaxHP.color = Color.red;
+            }
+
         }
     }
 

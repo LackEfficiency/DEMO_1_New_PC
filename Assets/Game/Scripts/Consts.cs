@@ -77,6 +77,20 @@ public static class Consts
     public const string E_ActAll = "E_ActAll"; //ActAllArgs
     public const string E_UseSpellCardRequest = "E_UseSpellCardRequest"; //UseSpellCardRequestArgs  
     public const string E_ConfirmSpell = "E_ConfirmSpell"; //ConfirmSpellArgs
+
+
+    //SpellNames
+    public static readonly string[] SpellNames = new string[]
+    {
+        "Damage",
+    };
+
+    //BuffNames
+    public static readonly string[] BuffNames = new string[]
+    {
+        "Brave1",
+    };
+
 }
 
 
@@ -152,4 +166,17 @@ public enum SpellType
     FieldSelf,
     FieldEnemy,
     FieldAny,
+}
+
+//Buff触发机制
+public enum BuffEvent
+{
+    OnRoundStart,
+    OnRoundEnd,
+    OnDie,
+    OnAttack,
+    OnTakeDamage,
+    OnTakeHeal,
+    OnActionFinish,
+    OnMove,
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -73,14 +74,30 @@ public class Spell : View
             string[] effectDetails = spellCardInfo.Effect.Split(' ');
             //0是法术效果
             string effectName = effectDetails[0];
-            //1是法术伤害值
-            int effectValue = int.Parse(effectDetails[1]);
-            //TODO:其余细节 例如法术的持续回合数等
 
-            //根据法术效果进行处理
-            Effect effect = gModel.EffectManager.GetEffect(effectName);
-            effect.EffectValue = effectValue;
-            effect.Cast(targetCard);
+            //区分一次性法术和Buff法术
+            if (Consts.SpellNames.Contains(effectName))
+            {
+                //1是法术伤害值
+                int effectValue = int.Parse(effectDetails[1]);
+                //TODO:其余细节 例如法术的持续回合数等
+
+                //根据法术效果进行处理
+                Effect effect = gModel.EffectManager.GetEffect(effectName);
+                effect.EffectValue = effectValue;
+                effect.Cast(targetCard);
+            }
+            //Buff使用Buff系统
+            else
+            {
+                //Buff法术
+                int BuffRound = int.Parse(effectDetails[1]);
+
+               //根据Buff效果添加Buff
+                BuffBase buff = gModel.BuffManager.GetBuff(effectName);
+                gModel.BuffManager.AddBuffToMonster(targetCard, buff);
+            }
+
 
         }
 
@@ -253,6 +270,11 @@ public class Spell : View
         TileBattle tile = e.tile;
 
         //取消使用法术 使用Spawner的CancelSummon方法
+        if (e.MouseButton == 1)
+        {
+            SendEvent(Consts.E_CancelSummon);
+            return;
+        }
 
         //确认可以使用法术
         if (tile.Data != null && Is_Spelling)

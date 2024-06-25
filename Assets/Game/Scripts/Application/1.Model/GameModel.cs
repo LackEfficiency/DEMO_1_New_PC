@@ -25,6 +25,9 @@ public class GameModel : Model //存储游戏数据
     //效果管理器
     EffectManager m_EffectManager;
 
+    //Buff管理器
+    BuffManager m_BuffManager;  
+
     //当前游戏的关卡索引
     int m_PlayLevelIndex = -1;
 
@@ -124,6 +127,11 @@ public class GameModel : Model //存储游戏数据
         get => m_EffectManager; 
         set => m_EffectManager = value; 
     }
+    public BuffManager BuffManager 
+    {
+        get => m_BuffManager; 
+        set => m_BuffManager = value; 
+    }
 
     #endregion
 
@@ -150,6 +158,10 @@ public class GameModel : Model //存储游戏数据
         //读取效果数据
         m_EffectManager = new EffectManager();
         Tools.LoadEffects(ref m_EffectManager);
+
+        //读取Buff数据
+        m_BuffManager = new BuffManager();
+        Tools.LoadBuffs(ref m_BuffManager);
 
     }
 

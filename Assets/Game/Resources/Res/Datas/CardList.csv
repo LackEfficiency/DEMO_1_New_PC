@@ -3,6 +3,7 @@ monster,0,knight,2,8,3
 monster,1,ghost,1,12,2
 monster,2,dog,3,5,2
 monster,3,caster,2,6,2
-#,编号,卡名,效果,类型,回合数
+#,编号,卡名,效果,类型,回合数,
 spell,4,fireBall,Damage 4,Enemy,3
 spell,5,cure,Damage -4,Self,3
+spell,6,brave1,Brave1 10,Self,2
