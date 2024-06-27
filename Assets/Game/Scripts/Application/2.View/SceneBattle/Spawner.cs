@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -76,14 +77,29 @@ public class Spawner : View
         m_card.Player = player;
 
         //订阅Buff事件
-        m_card.OnAttack += (MonsterCard) => gModel.BuffManager.TriggerEvent(m_card, BuffEvent.OnAttack);
-        m_card.OnTakeDamage += (MonsterCard) => gModel.BuffManager.TriggerEvent(m_card, BuffEvent.OnTakeDamage);
-        m_card.OnActionFinish += (MonsterCard) => gModel.BuffManager.TriggerEvent(m_card, BuffEvent.OnActionFinish);
-        m_card.OnDie += (MonsterCard) => gModel.BuffManager.TriggerEvent(m_card, BuffEvent.OnDie);
-        m_card.OnMove += (MonsterCard) => gModel.BuffManager.TriggerEvent(m_card, BuffEvent.OnMove);
-        m_card.OnTakeHeal += (MonsterCard) => gModel.BuffManager.TriggerEvent(m_card, BuffEvent.OnTakeHeal);
-        m_card.OnActionFinish += (MonsterCard) => gModel.BuffManager.OnActionFinish(m_card);
+        m_card.OnAttack += (MonsterCard) => Game.Instance.BuffManager.TriggerEvent(m_card, BuffEvent.OnAttack);
+        m_card.OnTakeDamage += (MonsterCard) => Game.Instance.BuffManager.TriggerEvent(m_card, BuffEvent.OnTakeDamage);
+        m_card.OnActionFinish += (MonsterCard) => Game.Instance.BuffManager.TriggerEvent(m_card, BuffEvent.OnActionFinish);
+        m_card.OnDie += (MonsterCard) => Game.Instance.BuffManager.TriggerEvent(m_card, BuffEvent.OnDie);
+        m_card.OnMove += (MonsterCard) => Game.Instance.BuffManager.TriggerEvent(m_card, BuffEvent.OnMove);
+        m_card.OnTakeHeal += (MonsterCard) => Game.Instance.BuffManager.TriggerEvent(m_card, BuffEvent.OnTakeHeal);
+        m_card.OnActionFinish += (MonsterCard) => Game.Instance.BuffManager.OnActionFinish(m_card);
 
+        //初始化技能
+        string[] skills = m_card.MonsterCardInfo.Skills.Split(' ');
+        foreach (string skill in skills)
+        {
+            if (Consts.SkillNames.Contains(skill))
+            {
+                SkillBase skillBase = Game.Instance.SkillManager.GetSkill(skill);
+                Game.Instance.SkillManager.AddSkillToMonster(m_card, skillBase);
+            }
+        }
+
+        //订阅技能
+        m_card.OnActionFinish += (MonsterCard) => Game.Instance.SkillManager.OnActionFinish(m_card);
+        m_card.OnAttack += (MonsterCard) => Game.Instance.SkillManager.OnAttack(m_card);
+        m_card.OnActionStart += (Monster) => Game.Instance.SkillManager.OnActionStart(m_card);
 
         Vector3 pos = m_Map.GetPosition(tile);
         m_card.transform.position = pos;

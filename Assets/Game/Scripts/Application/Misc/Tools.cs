@@ -155,7 +155,8 @@ public class Tools
                 int atk = int.Parse(rowArray[3]);
                 int hp = int.Parse(rowArray[4]);
                 int cost = int.Parse(rowArray[5]);
-                MonsterCardInfo monsterCard = new MonsterCardInfo(CardType.Monster, id, name, cost, atk, hp);
+                string skills = rowArray[6].Replace("\r", "");
+                MonsterCardInfo monsterCard = new MonsterCardInfo(CardType.Monster, id, name, cost, atk, hp, skills);
 
                 Cards.Add(monsterCard);
             }
@@ -173,34 +174,6 @@ public class Tools
             }
         }
     }
-
-    //初始化效果字典
-    public static void LoadEffects(ref EffectManager effectManager)
-    {
-        //初始化所有法术
-        DamageEffect damageEffect = new DamageEffect(); 
-        damageEffect.EffectName = "Damage";
-        damageEffect.EffectDescription = "Change Hp, both positive and negative";
-        //添加更多
-
-
-        //添加到字典
-        effectManager.AddEffect(damageEffect);
-
-    }
-
-    //初始化Buff字典
-    public static void LoadBuffs(ref BuffManager buffManager)
-    {
-        //初始化所有Buff
-        BuffAtkIncreByDmg buffAtkIncreByDmg1 = new BuffAtkIncreByDmg("Brave1", 10, true, 1);
-
-        //添加更多
-
-        //添加到字典
-        buffManager.AddBuff(buffAtkIncreByDmg1);
-    }
-
 
     //加载图片
     public static IEnumerator LoadImage(string url, SpriteRenderer render)

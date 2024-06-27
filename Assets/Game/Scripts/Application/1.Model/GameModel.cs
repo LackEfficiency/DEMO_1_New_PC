@@ -22,12 +22,6 @@ public class GameModel : Model //存储游戏数据
     //这里不需要使用字典 卡牌的位置索引即为实际的索引
     List<CardInfo> m_Cards = new List<CardInfo>();
 
-    //效果管理器
-    EffectManager m_EffectManager;
-
-    //Buff管理器
-    BuffManager m_BuffManager;  
-
     //当前游戏的关卡索引
     int m_PlayLevelIndex = -1;
 
@@ -122,17 +116,6 @@ public class GameModel : Model //存储游戏数据
         set => m_CurrentSceneIndex = value; 
     }
 
-    public EffectManager EffectManager 
-    { 
-        get => m_EffectManager; 
-        set => m_EffectManager = value; 
-    }
-    public BuffManager BuffManager 
-    {
-        get => m_BuffManager; 
-        set => m_BuffManager = value; 
-    }
-
     #endregion
 
     #region 方法
@@ -154,15 +137,6 @@ public class GameModel : Model //存储游戏数据
 
         //读取卡牌数据
         Tools.LoadCardData(ref m_Cards);
-
-        //读取效果数据
-        m_EffectManager = new EffectManager();
-        Tools.LoadEffects(ref m_EffectManager);
-
-        //读取Buff数据
-        m_BuffManager = new BuffManager();
-        Tools.LoadBuffs(ref m_BuffManager);
-
     }
 
     //游戏开始
@@ -207,7 +181,7 @@ public class GameModel : Model //存储游戏数据
         if (Cards[id].CardType == CardType.Monster)
         {
             var monstercard = Cards[id] as MonsterCardInfo;
-            copyCard = new MonsterCardInfo(monstercard.CardType, monstercard.CardID, monstercard.CardName, monstercard.Cost, monstercard.Attack, monstercard.HP);
+            copyCard = new MonsterCardInfo(monstercard.CardType, monstercard.CardID, monstercard.CardName, monstercard.Cost, monstercard.Attack, monstercard.HP, monstercard.Skills);
         }
         else if (Cards[id].CardType == CardType.Spell)
         {

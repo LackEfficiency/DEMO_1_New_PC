@@ -182,3 +182,14 @@ TODO:
 
 25/06/2024	
 1.完成了Buff系统的实现
+
+26/06/2024
+1.完成skillBase,skillInstance,skillManager
+TODO:
+1.完成技能的实现
+2.鼠标放在角色上显示Buff和技能
+
+27/06/2024
+1.完成技能系统
+TODO:
+1.添加更多的Buff, Effect和Skill

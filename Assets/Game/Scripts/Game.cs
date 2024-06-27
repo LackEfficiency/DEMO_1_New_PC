@@ -6,6 +6,9 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(ObjectPool))]
 [RequireComponent(typeof(Sound))]
 [RequireComponent(typeof(StaticData))]
+[RequireComponent(typeof(EffectManager))]
+[RequireComponent(typeof(BuffManager))]
+[RequireComponent(typeof(SkillManager))]
 public class Game : ApplicationBase<Game>//游戏起点，初始化框架
 {
     //全局访问的功能
@@ -15,6 +18,12 @@ public class Game : ApplicationBase<Game>//游戏起点，初始化框架
     public Sound Sound = null; //声音控制
     [HideInInspector]
     public StaticData StaticData = null; //全局访问的静态数据
+    [HideInInspector]
+    public EffectManager EffectManager = null; //全局访问的效果管理
+    [HideInInspector]
+    public BuffManager BuffManager = null; //全局访问的Buff管理
+    [HideInInspector]
+    public SkillManager SkillManager = null; //全局访问的技能管理
 
     //全局方法
     public void LoadScene(int level)
@@ -55,6 +64,9 @@ public class Game : ApplicationBase<Game>//游戏起点，初始化框架
         ObjectPool = ObjectPool.Instance;
         Sound = Sound.Instance;
         StaticData = StaticData.Instance;
+        EffectManager = EffectManager.Instance;
+        BuffManager = BuffManager.Instance; 
+        SkillManager = SkillManager.Instance;
 
         //注册启动命令
         RegisterController(Consts.E_StartUp, typeof(StartUpCommand));

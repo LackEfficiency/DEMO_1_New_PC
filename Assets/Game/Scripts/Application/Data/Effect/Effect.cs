@@ -5,13 +5,17 @@ using UnityEngine;
 public abstract class Effect
 { 
     private string effectName;
-    private int effectValue;
     private string effectDescription;
+
+    protected Effect(string effectName, string effectDescription)
+    {
+        this.effectName = effectName;
+        this.effectDescription = effectDescription;
+    }
 
     public string EffectName { get => effectName; set => effectName = value; }
   
     public string EffectDescription { get => effectDescription; set => effectDescription = value; }
-    public int EffectValue { get => effectValue; set => effectValue = value; }
 
     public abstract void Cast(MonsterCard card);
 

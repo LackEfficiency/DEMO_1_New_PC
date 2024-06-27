@@ -24,6 +24,7 @@ public class MonsterCard : Card
     public event Action<MonsterCard> OnTakeDamage;
     public event Action<MonsterCard> OnTakeHeal;
     public event Action<MonsterCard> OnActionFinish;
+    public event Action<MonsterCard> OnActionStart;
     #endregion
 
     #region 字段
@@ -259,12 +260,6 @@ public class MonsterCard : Card
                     OnDamage(this);
                 }
 
-                //行动完毕事件
-                if (OnActionFinish != null)
-                {
-                    OnActionFinish(this);
-                }
-
             }
             else
                 IsCardReturn = true;
@@ -315,6 +310,14 @@ public class MonsterCard : Card
     {
         this.MaxHpBoost += value;
         this.Hp += value;
+    }
+
+    public void ActionFinish()
+    {
+        if (OnActionFinish != null)
+        {
+            OnActionFinish(this);
+        }
     }
     #endregion
 
@@ -396,6 +399,10 @@ public class MonsterCard : Card
         while (OnActionFinish != null)
         {
             OnActionFinish -= OnActionFinish;
+        }
+        while (OnActionStart != null)
+        {
+            OnActionStart -= OnActionStart;
         }
    
     }

@@ -61,6 +61,7 @@ public class Spell : View
     public GameObject WaitingSpell { get => m_WaitingSpell; set => m_WaitingSpell = value; }
     public GameObject SpellIcon { get => m_SpellIcon; set => m_SpellIcon = value; }
     public Vector3 SpellPos { get => m_SpellPos; set => m_SpellPos = value; }
+
     #endregion
 
     #region 方法
@@ -76,15 +77,10 @@ public class Spell : View
             string effectName = effectDetails[0];
 
             //区分一次性法术和Buff法术
-            if (Consts.SpellNames.Contains(effectName))
+            if (Consts.EffectNames.Contains(effectName))
             {
-                //1是法术伤害值
-                int effectValue = int.Parse(effectDetails[1]);
-                //TODO:其余细节 例如法术的持续回合数等
-
                 //根据法术效果进行处理
-                Effect effect = gModel.EffectManager.GetEffect(effectName);
-                effect.EffectValue = effectValue;
+                Effect effect = Game.Instance.EffectManager.GetEffect(effectName);           
                 effect.Cast(targetCard);
             }
             //Buff使用Buff系统
@@ -94,8 +90,8 @@ public class Spell : View
                 int BuffRound = int.Parse(effectDetails[1]);
 
                //根据Buff效果添加Buff
-                BuffBase buff = gModel.BuffManager.GetBuff(effectName);
-                gModel.BuffManager.AddBuffToMonster(targetCard, buff);
+                BuffBase buff = Game.Instance.BuffManager.GetBuff(effectName);
+                Game.Instance.BuffManager.AddBuffToMonster(targetCard, buff);
             }
 
 

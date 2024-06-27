@@ -199,6 +199,8 @@ class CardAction : View
             yield return StartCoroutine(CardAttack(targetCard, tile));
         }
 
+        targetCard.ActionFinish(); //卡行动结束
+
         StartCoroutine(MoveNextCard()); // 移动下一个卡片
     }
     #endregion

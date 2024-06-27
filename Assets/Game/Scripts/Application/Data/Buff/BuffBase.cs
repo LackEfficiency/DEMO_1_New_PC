@@ -23,7 +23,7 @@ public abstract class BuffBase
     #endregion
 
     #region 方法
-    public BuffBase(string buffName, int buffRound, bool buffStackable)
+    protected BuffBase(string buffName, int buffRound, bool buffStackable)
     {
         m_BuffName = buffName;
         m_BuffRound = buffRound;

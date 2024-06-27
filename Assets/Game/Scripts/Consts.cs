@@ -80,9 +80,16 @@ public static class Consts
 
 
     //SpellNames
-    public static readonly string[] SpellNames = new string[]
+    public static readonly string[] EffectNames = new string[]
     {
-        "Damage",
+        "Damage1",
+        "Heal1",
+        "Damage2",
+        "Heal2",
+        "Damage3",
+        "Heal3",
+        "Damage4",
+        "Heal4",
     };
 
     //BuffNames
@@ -91,6 +98,11 @@ public static class Consts
         "Brave1",
     };
 
+    //SkillNames
+    public static readonly string[] SkillNames = new string[]
+    {
+        "Brave1",
+    };
 }
 
 

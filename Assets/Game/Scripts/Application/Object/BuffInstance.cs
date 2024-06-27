@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 
@@ -6,7 +7,8 @@ using UnityEngine.TextCore.Text;
 public class BuffInstance
 {
     BuffBase m_BuffBase;
-    int m_RemainingRound;
+    //剩余回合数为-1代表永久存在
+    int m_RemainingRound; 
     //buff累计改变的属性值
     int m_AccumulatedEffect;
     
@@ -33,11 +35,17 @@ public class BuffInstance
     public void OnActionFinish(MonsterCard monsterCard)
     {
         m_RemainingRound--;
-        if (m_RemainingRound <= 0)
+        if (m_RemainingRound == 0)
         {
             //Buff被移除时如果要触发某个事件，则在这里调用
             m_BuffBase.RemoveBuff(monsterCard, this);
         }
+    }
+
+    //修改剩余回合数，由其他buff或者effect触发
+    public void ModifyRemainingRound(int amount)
+    {
+        m_RemainingRound = Math.Max(0, m_RemainingRound + amount);
     }
 
     //记录修改的属性值

@@ -16,7 +16,8 @@ public class MonsterCardInfo : CardInfo
     int m_MaxHP;
     int m_Attack;
     int m_AttackRange = 2;
-    int m_MoveRange = 2;    
+    int m_MoveRange = 2;
+    string m_Skills;
 
     #endregion
 
@@ -46,14 +47,16 @@ public class MonsterCardInfo : CardInfo
         get => m_MoveRange; 
         set => m_MoveRange = value; 
     }
+    public string Skills { get => m_Skills; set => m_Skills = value; }
     #endregion
 
     #region 方法
-    public MonsterCardInfo(CardType type, int id, string name, int cost, int attack, int maxHp) : base(type, id, name, cost)
+    public MonsterCardInfo(CardType type, int id, string name, int cost, int attack, int maxHp, string skills) : base(type, id, name, cost)
     {
         m_HP = maxHp;
         m_MaxHP = maxHp;
         m_Attack = attack;
+        m_Skills = skills;
     }
     #endregion
 

@@ -5,7 +5,7 @@ using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
 //管理角色的 BUFF 实例，并处理 BUFF 的应用、更新和移除。
-public class BuffManager 
+public class BuffManager : Singleton<BuffManager>
 {
     #region 常量
     #endregion
@@ -29,7 +29,22 @@ public class BuffManager
     #endregion
 
     #region 方法
-    
+    protected override void Awake()
+    {
+        base.Awake();
+        Initialize();
+    }
+
+    public void Initialize()
+    {
+        BuffAtkIncreByDmg buffAtkIncreByDmg1 = new BuffAtkIncreByDmg("Brave1", 10, true, 1);
+
+        //添加更多
+
+        //添加到字典
+        AddBuff(buffAtkIncreByDmg1);
+    }
+
     public void AddBuff(BuffBase buff)
     {
         if (!Buffs.ContainsKey(buff.BuffName))
