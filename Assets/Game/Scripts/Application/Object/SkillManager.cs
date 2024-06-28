@@ -79,6 +79,16 @@ public class SkillManager : Singleton<SkillManager>
         SkillDictionary[monsterCard].Add(newSkillInstance);
         newSkillInstance.OnActivate(monsterCard);
     }
+
+    //传入卡牌 获取身上的所有技能
+    public List<SkillInstance> GetSkillOnCard(MonsterCard monsterCard)
+    {
+        if (SkillDictionary.ContainsKey(monsterCard))
+        {
+            return SkillDictionary[monsterCard];
+        }
+        return null;
+    }
     #endregion
 
     #region Unity回调

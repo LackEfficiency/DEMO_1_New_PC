@@ -28,7 +28,7 @@ public class SkillBrave : SkillBase
 
     public override void Activate(MonsterCard monsterCard)
     {
-        BuffBase buff = Game.Instance.BuffManager.GetBuff("Brave" + m_BraveValue.ToString());
+        BuffBase buff = Game.Instance.BuffManager.GetBuff("Brave"+ m_BraveValue.ToString()+ "FromSkill");
         Game.Instance.BuffManager.AddBuffToMonster(monsterCard, buff);
     }
     #endregion

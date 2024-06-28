@@ -37,12 +37,13 @@ public class BuffManager : Singleton<BuffManager>
 
     public void Initialize()
     {
-        BuffAtkIncreByDmg buffAtkIncreByDmg1 = new BuffAtkIncreByDmg("Brave1", 10, true, 1);
-
+        BuffAtkIncreByDmg buffBrave1 = new BuffAtkIncreByDmg("Brave1", 10, true, 1);
+        BuffAtkIncreByDmg buffBrave1FromSkill = new BuffAtkIncreByDmg("Brave1FromSkill", -1, true, 1);
         //添加更多
 
         //添加到字典
-        AddBuff(buffAtkIncreByDmg1);
+        AddBuff(buffBrave1);
+        AddBuff(buffBrave1FromSkill);
     }
 
     public void AddBuff(BuffBase buff)
@@ -87,7 +88,17 @@ public class BuffManager : Singleton<BuffManager>
                 }
             }
         }
-    }   
+    }
+
+    //传入卡牌 获取身上的所有buff
+    public List<BuffInstance> GetBuffOnCard(MonsterCard monsterCard)
+    {
+        if (BuffDictionary.ContainsKey(monsterCard))
+        {
+            return BuffDictionary[monsterCard];
+        }
+        return null;
+    }
     #endregion
 
     #region Unity回调

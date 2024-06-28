@@ -50,6 +50,7 @@ public static class Consts
     public const string V_UnitStatus = "V_UnitStatus";
     public const string V_ButtonBattle = "V_ButtonBattle";
     public const string V_CardMove = "V_CardMove";
+    public const string V_UIInformationWindow = "V_UIInformationWindow";
 
     //Controller
     public const string E_StartUp = "E_StartUp";
