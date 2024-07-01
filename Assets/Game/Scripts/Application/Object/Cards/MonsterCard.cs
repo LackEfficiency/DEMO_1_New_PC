@@ -106,6 +106,7 @@ public class MonsterCard : Card
     public int TotalAttack
     {
         get => Math.Max(0, BaseAttack + AttackBoost);
+
     }
 
     //卡牌是否死亡
@@ -293,6 +294,8 @@ public class MonsterCard : Card
     protected void Die(Card card)
     {
         Debug.Log(monsterCardInfo.CardName.ToString() + ":Die");
+        //销毁卡牌
+        Game.Instance.ObjectPool.Unspawn(this.gameObject);
     }
 
     //攻击力增加

@@ -46,7 +46,7 @@ class ReduceCostCommand : Controller
 
     void ReduceByAmount(CardInfo cardInfo, int amount)
     {
-        //当前Cost若为0，则变为实际Cost的一般
+        //当前Cost若为0，则变为实际Cost的一半
         if (cardInfo.Cost == 0)
         {
             cardInfo.Cost = (gModel.Cards[cardInfo.CardID].Cost + 1) / 2 ;

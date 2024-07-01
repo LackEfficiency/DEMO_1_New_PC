@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -9,12 +10,17 @@ public class UIShowInformation : MonoBehaviour, IPointerEnterHandler, IPointerEx
     UIInformationWindow uIInformationWindow = null;
     bool hasEntered = false;
 
+    private void Start()
+    {
+        uIInformationWindow = GameObject.Find("Canvas").transform.Find("UIInformationWindow").GetComponent<UIInformationWindow>();
+    }
+
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (!hasEntered)
         {
             hasEntered = true;
-            uIInformationWindow = GameObject.Find("Canvas").transform.Find("UIInformationWindow").GetComponent<UIInformationWindow>();
             Vector3 pos = Input.mousePosition;
             MonsterCard monsterCard = GetComponent<MonsterCard>();
             uIInformationWindow.Show(pos, monsterCard);
@@ -24,7 +30,11 @@ public class UIShowInformation : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        uIInformationWindow.Hide();
-        hasEntered = false;
+        if (hasEntered)
+        {
+            uIInformationWindow.Hide();
+            hasEntered = false;
+        }
     }
+
 }

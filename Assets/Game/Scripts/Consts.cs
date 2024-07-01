@@ -51,6 +51,7 @@ public static class Consts
     public const string V_ButtonBattle = "V_ButtonBattle";
     public const string V_CardMove = "V_CardMove";
     public const string V_UIInformationWindow = "V_UIInformationWindow";
+    public const string V_Summoner = "V_Summoner";  
 
     //Controller
     public const string E_StartUp = "E_StartUp";
@@ -78,6 +79,7 @@ public static class Consts
     public const string E_ActAll = "E_ActAll"; //ActAllArgs
     public const string E_UseSpellCardRequest = "E_UseSpellCardRequest"; //UseSpellCardRequestArgs  
     public const string E_ConfirmSpell = "E_ConfirmSpell"; //ConfirmSpellArgs
+
 
 
     //SpellNames

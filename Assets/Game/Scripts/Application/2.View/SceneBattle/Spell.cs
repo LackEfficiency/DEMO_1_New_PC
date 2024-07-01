@@ -252,6 +252,9 @@ public class Spell : View
 
                     //数据更新               
                     WaitingSpell = null;
+
+                    //显示剩余数量更新
+                    m_Spawner.SelfSummoner.HandCards -= 1;
                 }
 
                 break;

@@ -23,6 +23,9 @@ public class Spawner : View
     GameModel gModel = null;
     bool is_Summon = false;
 
+    public Summoner SelfSummoner = null;
+    public Summoner EnemySummoner = null;
+
     GameObject m_WaitingSummon = null;
 
     Spell m_Spell = null;
@@ -54,6 +57,47 @@ public class Spawner : View
     #endregion
 
     #region 方法
+    //召唤者生成
+    void SpawnSummoner(Vector3 position, Player player)
+    {
+        if(player == Player.Self)
+        {
+            GameObject go = Game.Instance.ObjectPool.Spawn("Summoner", "prefabs/Summoner");
+            // 如果是玩家 则朝右
+            // 获取render组件
+            SpriteRenderer mySpriteRenderer = go.GetComponent<SpriteRenderer>();
+            // 左右翻转
+            mySpriteRenderer.flipX = true;
+
+            SelfSummoner = go.GetComponent<Summoner>();
+            SelfSummoner.StatusChanged += UpdateSummoner;
+            SelfSummoner.transform.position = position;
+            SelfSummoner.Player = player;
+            SelfSummoner.Hp = 40;
+            SelfSummoner.RemainingCards = rModel.PlayerDeckList.Count;
+            SelfSummoner.HandCards = rModel.PlayerHandList.Count;
+            UpdateSummoner(SelfSummoner);
+        }
+        else if(player == Player.Enemy)
+        {
+            GameObject go = Game.Instance.ObjectPool.Spawn("Summoner", "prefabs/Summoner");
+            EnemySummoner = go.GetComponent<Summoner>();
+            EnemySummoner.StatusChanged += UpdateSummoner;
+            EnemySummoner.transform.position = position;
+            EnemySummoner.Player = player;
+            EnemySummoner.Hp = 40;
+
+            //敌人卡组总数 从回合列表里找
+            int totalCards = 0;
+            foreach (Round round in rModel.Rounds)
+            {
+                totalCards += round.EnemyID.Count;
+            }
+            EnemySummoner.RemainingCards = totalCards;
+            UpdateSummoner(EnemySummoner);
+        }
+    }
+
     void MoveFromField(Card card)
     {
         if (card != null && card.gameObject != null)
@@ -153,9 +197,6 @@ public class Spawner : View
                 tile.Card = null;
             }
         }   
-
-        //销毁卡牌
-        Game.Instance.ObjectPool.Unspawn(card.gameObject);
         
     }
 
@@ -165,6 +206,14 @@ public class Spawner : View
         UIUnitStatus uIUnitStatus = card.GetComponent<UIUnitStatus>();
         uIUnitStatus.Card = card;
         uIUnitStatus.Show();
+    }
+
+    //更新召唤者信息
+    public void UpdateSummoner(Summoner summoner)
+    {
+        UISummoner uISummoner = summoner.GetComponent<UISummoner>();
+        uISummoner.Summoner = summoner;
+        uISummoner.Show();
     }
 
     #endregion
@@ -201,6 +250,12 @@ public class Spawner : View
 
                     //获取法术控制视图
                     m_Spell = GetComponent<Spell>();
+
+                    //加载控制者
+                    Vector3 tilepos = m_Map.GetPosition(m_Map.GetTile(0, 2));
+                    SpawnSummoner(tilepos, Player.Self);
+                    tilepos = m_Map.GetPosition(m_Map.GetTile(MapBattle.ColumnCount-1, 2));
+                    SpawnSummoner(tilepos, Player.Enemy);
 
                 }
                 break;
@@ -278,6 +333,9 @@ public class Spawner : View
                  
                     //数据更新               
                     WaitingSummon = null;
+
+                    //召唤者数据更新
+                    SelfSummoner.HandCards -= 1;
                 }
                 break;
 
@@ -299,6 +357,9 @@ public class Spawner : View
                         //数据更新
                         //手牌移除这张卡
                         RoundModel.EnemyHandList.Remove(e3.cardInfo);
+
+                        //召唤者数据更新
+                        EnemySummoner.HandCards -= 1;
                         break;
                     }
                     

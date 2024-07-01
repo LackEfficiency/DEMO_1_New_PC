@@ -115,7 +115,7 @@ public class BuffManager : Singleton<BuffManager>
             foreach (var buffInstance in BuffDictionary[monsterCard])
             {
                 buffInstance.OnActionFinish(monsterCard);
-                if (buffInstance.RemainingRound <= 0)
+                if (buffInstance.RemainingRound == 0)
                 {
                     buffsToRemove.Add(buffInstance);
                 }

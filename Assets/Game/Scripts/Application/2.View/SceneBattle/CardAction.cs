@@ -117,9 +117,9 @@ class CardAction : View
 
         // 计算移动目标最远位置 防止超出地图边界
         if (player == Player.Self)
-            targetX = Mathf.Min(tile.X + moveRange, MapBattle.ColumnCount - 1);
+            targetX = Mathf.Min(tile.X + moveRange, MapBattle.ColumnCount - 2);
         else
-            targetX = Mathf.Max(tile.X - moveRange, 0);
+            targetX = Mathf.Max(tile.X - moveRange, 1);
 
 
         //查看是否有敌方阻挡 如果没有阻挡 则完成循环不改变targetX的值
