@@ -254,7 +254,7 @@ public class Spell : View
                     WaitingSpell = null;
 
                     //显示剩余数量更新
-                    m_Spawner.SelfSummoner.HandCards -= 1;
+                    rModel.SelfSummoner.HandCards -= 1;
                 }
 
                 break;

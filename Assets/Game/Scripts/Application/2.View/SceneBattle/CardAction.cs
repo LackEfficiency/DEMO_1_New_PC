@@ -87,11 +87,24 @@ class CardAction : View
             yield break;
         }
 
-        MonsterCard cardBeAttacked = attackTargets[0].Card.GetComponent<MonsterCard>();
+        //攻击玩家
+        if (attackTargets[0].X == 0)
+        {
+            card.Target = rModel.SelfSummoner; 
+        }
+        //攻击敌方玩家
+        else if (attackTargets[0].X == MapBattle.ColumnCount - 1)
+        {
+            card.Target = rModel.EnemySummoner;
+        }
+        //攻击卡牌
+        else
+        {
+            card.Target = attackTargets[0].Card.GetComponent<MonsterCard>();
+        }
 
         //动画控制
         card.IsCardAttacking = true;
-        card.Target = cardBeAttacked;
 
         //获取攻击目标的位置和当前卡牌的位置
         card.NextDes = m_Map.GetPosition(attackTargets[0]);
@@ -294,55 +307,37 @@ class CardAction : View
         return sortedTiles;
     }
 
-    
-    public List<TileBattle> GetCardsBeAttacked(MonsterCard card, TileBattle tile) //传入需要攻击的卡牌和卡牌所在的格子
+    //获取卡牌攻击目标
+    public List<TileBattle> GetCardsBeAttacked(MonsterCard card, TileBattle tile) //传入需要攻击的卡片和卡片所在的格子
     {
-        //通过卡牌所在的格子找到第一个存在攻击目标的格子
-        //根据Player的不同，攻击目标的搜索方式也不同
-        //返回攻击对象所处格子的列表
-
+        //寻找卡牌目标
         List<TileBattle> attackTarget = new List<TileBattle>();
-
-        //根据卡牌的攻击范围找到攻击目标
-        int i = 1;
-        //获取攻击范围
         int attackRange = card.AttackRange;
+        int direction = card.Player == Player.Self ? 1 : -1;
 
-        if (player == Player.Self)
-        {       
-            //遍历格子，找到攻击目标
-            while (i + tile.X < MapBattle.ColumnCount)
-            {
-                TileBattle targetTile = m_Map.GetTile(tile.X + i, tile.Y);
-                if (targetTile.Card)
-                {
-                    MonsterCard targetCard = targetTile.Card.GetComponent<MonsterCard>();
-                    if (targetCard.Player == Player.Enemy)
-                    {
-                        attackTarget.Add(targetTile);
-                    }
-                }
-                i++;
-                if (i > attackRange)
-                    return attackTarget;
-            }
-        }
-        else if (player == Player.Enemy)
+        for (int i = 1; i <= attackRange; i++)
         {
-            while (tile.X - i >= 0)
+            int targetX = tile.X + (i * direction);
+            TileBattle targetTile = m_Map.GetTile(targetX, tile.Y);
+
+            //可以攻击玩家
+            if (targetX == 0 || targetX == MapBattle.ColumnCount - 1) 
+            { 
+                if (card.Player == Player.Self && targetX == MapBattle.ColumnCount - 1 || 
+                    card.Player == Player.Enemy && targetX == 0)
+                    attackTarget.Add(targetTile);
+                break;
+            }
+
+            //可以攻击敌方卡牌
+            if (targetTile.Card)
             {
-                TileBattle targetTile = m_Map.GetTile(tile.X - i, tile.Y);
-                if (targetTile.Card)
+                MonsterCard targetCard = targetTile.Card.GetComponent<MonsterCard>();
+                if ((card.Player == Player.Self && targetCard.Player == Player.Enemy) ||
+                    (card.Player == Player.Enemy && targetCard.Player == Player.Self))
                 {
-                    MonsterCard targetCard = targetTile.Card.GetComponent<MonsterCard>();
-                    if (targetCard.Player == Player.Self)
-                    {
-                        attackTarget.Add(targetTile);
-                    }
+                    attackTarget.Add(targetTile);
                 }
-                i++;
-                if (i > attackRange)
-                    return attackTarget;
             }
         }
 

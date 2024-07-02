@@ -36,6 +36,9 @@ public class RoundModel : Model
     private bool m_IsRoundRun = true; //是否回合还在进行
     private bool m_IsTurnRun = true; //是否阶段还在进行 用于控制回合自动结束 
 
+    //双方玩家
+    public Summoner SelfSummoner = null;
+    public Summoner EnemySummoner = null;
     #endregion
 
     #region 属性

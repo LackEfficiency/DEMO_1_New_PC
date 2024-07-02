@@ -13,8 +13,8 @@ class DrawCardCommand : Controller
 
         //更新玩家显示
         Spawner spawner = GetView<Spawner>();
-        spawner.SelfSummoner.HandCards += e.nums;
-        spawner.SelfSummoner.RemainingCards -= e.nums;
-        spawner.UpdateSummoner(spawner.SelfSummoner);
+        rModel.SelfSummoner.HandCards += e.nums;
+        rModel.SelfSummoner.RemainingCards -= e.nums;
+        spawner.UpdateSummoner(rModel.SelfSummoner);
     }
 }

@@ -40,7 +40,7 @@ public class MonsterCard : Card
 
     //基本属性
     private int m_BaseAttack; //基础攻击力
-    private int m_Hp; //基础血量
+    protected int m_Hp; //基础血量
     private int m_MaxHp; //最大血量
     private int m_MoveRange; //移动范围
     private int m_AttackRange; //攻击范围
@@ -178,7 +178,7 @@ public class MonsterCard : Card
 
     #region 方法
     //刷新属性
-    public void UpdateStats()
+    public void InitStatus()
     {
         this.BaseAttack = MonsterCardInfo.Attack;
         this.MaxHp = MonsterCardInfo.MaxHP;
@@ -286,14 +286,11 @@ public class MonsterCard : Card
         Hp -= hit;
 
         //ToDO:触发动画触发器
-  
-        Debug.Log(monsterCardInfo.CardName.ToString() + ":卡牌受伤");
     }
 
     //死亡事件触发
     protected void Die(Card card)
     {
-        Debug.Log(monsterCardInfo.CardName.ToString() + ":Die");
         //销毁卡牌
         Game.Instance.ObjectPool.Unspawn(this.gameObject);
     }
@@ -322,6 +319,14 @@ public class MonsterCard : Card
             OnActionFinish(this);
         }
     }
+
+    public void OnStatusChanged(MonsterCard monsterCard)
+    {
+        if (StatusChanged != null)
+        {
+            StatusChanged(this);
+        }
+    }
     #endregion
 
     #region Unity回调
@@ -346,8 +351,6 @@ public class MonsterCard : Card
     {
         base.OnSpawn();
         this.Dead += Die;
-        this.StatusChanged += StatusChanged;
-
         //初始化额外攻击力
         this.AttackBoost = 0;
     }

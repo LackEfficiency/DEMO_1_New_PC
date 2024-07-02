@@ -23,11 +23,7 @@ public class Spawner : View
     GameModel gModel = null;
     bool is_Summon = false;
 
-    public Summoner SelfSummoner = null;
-    public Summoner EnemySummoner = null;
-
     GameObject m_WaitingSummon = null;
-
     Spell m_Spell = null;
     #endregion
 
@@ -69,23 +65,25 @@ public class Spawner : View
             // 左右翻转
             mySpriteRenderer.flipX = true;
 
-            SelfSummoner = go.GetComponent<Summoner>();
-            SelfSummoner.StatusChanged += UpdateSummoner;
-            SelfSummoner.transform.position = position;
-            SelfSummoner.Player = player;
-            SelfSummoner.Hp = 40;
-            SelfSummoner.RemainingCards = rModel.PlayerDeckList.Count;
-            SelfSummoner.HandCards = rModel.PlayerHandList.Count;
-            UpdateSummoner(SelfSummoner);
+            rModel.SelfSummoner = go.GetComponent<Summoner>();
+            rModel.SelfSummoner.StatusChanged += UpdateSummoner;
+            rModel.SelfSummoner.transform.position = position;
+            rModel.SelfSummoner.Player = player;
+            rModel.SelfSummoner.MaxHp = 100;
+            rModel.SelfSummoner.Hp = 40;
+            rModel.SelfSummoner.RemainingCards = rModel.PlayerDeckList.Count;
+            rModel.SelfSummoner.HandCards = rModel.PlayerHandList.Count;
+            UpdateSummoner(rModel.SelfSummoner);
         }
         else if(player == Player.Enemy)
         {
             GameObject go = Game.Instance.ObjectPool.Spawn("Summoner", "prefabs/Summoner");
-            EnemySummoner = go.GetComponent<Summoner>();
-            EnemySummoner.StatusChanged += UpdateSummoner;
-            EnemySummoner.transform.position = position;
-            EnemySummoner.Player = player;
-            EnemySummoner.Hp = 40;
+            rModel.EnemySummoner = go.GetComponent<Summoner>();
+            rModel.EnemySummoner.StatusChanged += UpdateSummoner;
+            rModel.EnemySummoner.transform.position = position;
+            rModel.EnemySummoner.Player = player;
+            rModel.EnemySummoner.MaxHp = 100;
+            rModel.EnemySummoner.Hp = 40;
 
             //敌人卡组总数 从回合列表里找
             int totalCards = 0;
@@ -93,8 +91,8 @@ public class Spawner : View
             {
                 totalCards += round.EnemyID.Count;
             }
-            EnemySummoner.RemainingCards = totalCards;
-            UpdateSummoner(EnemySummoner);
+            rModel.EnemySummoner.RemainingCards = totalCards;
+            UpdateSummoner(rModel.EnemySummoner);
         }
     }
 
@@ -114,7 +112,7 @@ public class Spawner : View
 
         m_card.MonsterCardInfo = cardInfo as MonsterCardInfo;
         //每次召唤时更新状态
-        m_card.UpdateStats();
+        m_card.InitStatus();
         m_card.CardPosistionChange += MoveFromField;
         m_card.Dead += Card_Dead;
         m_card.StatusChanged += UpdateStatus;
@@ -209,10 +207,10 @@ public class Spawner : View
     }
 
     //更新召唤者信息
-    public void UpdateSummoner(Summoner summoner)
+    public void UpdateSummoner(MonsterCard card)
     {
-        UISummoner uISummoner = summoner.GetComponent<UISummoner>();
-        uISummoner.Summoner = summoner;
+        UISummoner uISummoner = card.GetComponent<UISummoner>();
+        uISummoner.Summoner = card as Summoner;
         uISummoner.Show();
     }
 
@@ -335,7 +333,7 @@ public class Spawner : View
                     WaitingSummon = null;
 
                     //召唤者数据更新
-                    SelfSummoner.HandCards -= 1;
+                    rModel.SelfSummoner.HandCards -= 1;
                 }
                 break;
 
@@ -359,7 +357,7 @@ public class Spawner : View
                         RoundModel.EnemyHandList.Remove(e3.cardInfo);
 
                         //召唤者数据更新
-                        EnemySummoner.HandCards -= 1;
+                        rModel.EnemySummoner.HandCards -= 1;
                         break;
                     }
                     
