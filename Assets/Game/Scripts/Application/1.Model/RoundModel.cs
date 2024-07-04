@@ -26,11 +26,11 @@ public class RoundModel : Model
 
     private List<CardInfo> m_PlayerDeckList = new List<CardInfo>(); //玩家当前卡组 仅在战斗场景使用
     private List<GameObject> m_PlayerSummonList = new List<GameObject>(); //玩家场上卡牌集合
-    private List<GameObject> m_PlayerGraveList = new List<GameObject>(); //玩家墓地卡牌集合
+    private List<CardInfo> m_PlayerGraveList = new List<CardInfo>(); //玩家墓地卡牌集合
     private List<GameObject> m_PlayerHandList = new List<GameObject>(); //玩家当前手牌
 
     private List<CardInfo> m_EnemyHandList = new List<CardInfo>();//敌人当前卡组 每回合从回合信息里添加 敌人卡组没有手牌上限
-    private List<GameObject> m_EnemyGraveList = new List<GameObject>();//敌人当前墓地
+    private List<CardInfo> m_EnemyGraveList = new List<CardInfo>();//敌人当前墓地
     private List<GameObject> m_EnemySummonList = new List<GameObject>(); //敌人当前场上卡组集合
 
     private bool m_IsRoundRun = true; //是否回合还在进行
@@ -77,7 +77,7 @@ public class RoundModel : Model
     {
         get => m_PlayerSummonList;
     }
-    public List<GameObject> PlayerGraveList
+    public List<CardInfo> PlayerGraveList
     {
         get => m_PlayerGraveList;
     }
@@ -89,7 +89,7 @@ public class RoundModel : Model
     {
         get => m_EnemyHandList;
     }
-    public List<GameObject> EnemyGraveList
+    public List<CardInfo> EnemyGraveList
     {
         get => m_EnemyGraveList;
     }

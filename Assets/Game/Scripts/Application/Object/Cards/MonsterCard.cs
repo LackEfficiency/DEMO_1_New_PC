@@ -288,6 +288,12 @@ public class MonsterCard : Card
         //ToDO:触发动画触发器
     }
 
+    //外部调用的死亡
+    public void Kill()
+    {
+        Hp = 0;
+    }
+
     //死亡事件触发
     protected void Die(Card card)
     {

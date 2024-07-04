@@ -186,6 +186,16 @@ public class Spawner : View
         {
             RoundModel.EnemySummonList.Remove(card.gameObject);
         }
+        
+        //墓地加入这张卡
+        if (card.player == Player.Self)
+        {
+            RoundModel.PlayerGraveList.Add(card.CardInfo);
+        }
+        else if (card.player == Player.Enemy)
+        {
+            RoundModel.EnemyGraveList.Add(card.CardInfo);
+        }
 
         //格子清空
         foreach (TileBattle tile in m_Map.Grid)

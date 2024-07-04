@@ -76,15 +76,14 @@ public class UIInformationWindow : View
         // TODO: 动态显示/隐藏滚动条
 
     }
-    #endregion
 
-    #region Unity回调
     public void Show(Vector3 pos, MonsterCard monsterCard)
     {
         pos.x += 300;
         scrollView.transform.position = pos;
         scrollView.SetActive(true);
         MonsterCard = monsterCard;
+        monsterCard.Dead += HideWindow;
         UpdateUI();
     }
 
@@ -92,6 +91,16 @@ public class UIInformationWindow : View
     {
         scrollView.SetActive(false);
     }
+
+    //当单位死亡时鼠标放在窗口上 则窗口不会消失 因此需要处理这种情况 监听单位死亡事件主动关闭窗口
+    public void HideWindow(Card monsterCard)
+    {
+        Hide();
+    }
+
+    #endregion
+
+    #region Unity回调
     #endregion
 
     #region 事件回调
