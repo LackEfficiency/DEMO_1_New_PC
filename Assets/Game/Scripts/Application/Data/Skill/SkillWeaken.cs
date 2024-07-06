@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class SkillBleed : SkillBase
+public class SkillWeaken : SkillBase
 {
-
 
     #region 常量
     #endregion
@@ -12,24 +11,23 @@ public class SkillBleed : SkillBase
     #endregion
 
     #region 字段
-    int m_BleedValue;
+    float m_WeakenValue; //减低攻击力的数值 可以为固定值 若值在0-1之间，为百分比
     #endregion
 
     #region 属性
-    public int BleedValue { get => m_BleedValue; set => m_BleedValue = value; }
-
+    public float WeakenValue { get => m_WeakenValue; set => m_WeakenValue = value; }
     #endregion
 
     #region 方法
-    public SkillBleed(string skillName, int coolDown, SpellType spellType, int bleedValue) : base(skillName, coolDown, spellType)
+    public SkillWeaken(string skillName, int coolDown, SpellType spellType, float weakenValue) : base(skillName, coolDown, spellType)
     {
-        m_BleedValue = bleedValue;
+        m_WeakenValue = weakenValue;
     }
-
 
     public override void OnAttack(MonsterCard monsterCard, MonsterCard target)
     {
-        BuffBase buff = Game.Instance.BuffManager.GetBuff("Bleed" + m_BleedValue.ToString());
+        //命名没有.的字符串
+        BuffBase buff = Game.Instance.BuffManager.GetBuff("Weaken"+ m_WeakenValue.ToString().Replace(".", ""));
         Game.Instance.BuffManager.AddBuffToMonster(target, buff);
     }
 
@@ -37,8 +35,6 @@ public class SkillBleed : SkillBase
     {
 
     }
-
-
     #endregion
 
     #region Unity回调

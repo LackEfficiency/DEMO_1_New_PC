@@ -39,11 +39,15 @@ public class BuffManager : Singleton<BuffManager>
     {
         BuffAtkIncreByDmg buffBrave1 = new BuffAtkIncreByDmg("Brave1", 10, true, 1);
         BuffAtkIncreByDmg buffBrave1FromSkill = new BuffAtkIncreByDmg("Brave1FromSkill", -1, true, 1);
+        BuffBleed buffBleed1 = new BuffBleed("Bleed1", 10, false, 1);
+        BuffWeaken buffWeaken05 = new BuffWeaken("Weaken05", 10, false, 0.5f);
         //添加更多
 
         //添加到字典
         AddBuff(buffBrave1);
         AddBuff(buffBrave1FromSkill);
+        AddBuff(buffBleed1);
+        AddBuff(buffWeaken05);
     }
 
     public void AddBuff(BuffBase buff)
@@ -77,15 +81,25 @@ public class BuffManager : Singleton<BuffManager>
             newBuffInstance.Apply(monsterCard);
             BuffDictionary[monsterCard].Add(newBuffInstance);
         }   
-        //如果不可叠加，找到对应的Buff，刷新持续时间
+        //如果不可叠加，先检查是否存在相应Buff,若找到对应的Buff，刷新持续时间
+        //若找不到，则添加新的Buff
         else if (!buff.BuffStackable)
         {
+            bool find = false;
             foreach (var buffInstance in BuffDictionary[monsterCard])
             {
+                
                 if (buffInstance.BuffBase.BuffName == buff.BuffName)
                 {
                     buffInstance.RemainingRound = buff.BuffRound;
+                    find = true;
                 }
+            }
+            if (find == false)
+            {
+                BuffInstance newBuffInstance = new BuffInstance(buff);
+                newBuffInstance.Apply(monsterCard);
+                BuffDictionary[monsterCard].Add(newBuffInstance);
             }
         }
     }
@@ -105,7 +119,17 @@ public class BuffManager : Singleton<BuffManager>
     #endregion
 
     #region 事件回调
-    //在实例化Monster时订阅，单个monster行动完成时调用
+    //在实例化Monster时订阅，单个monster触发事件时调用
+    //public void TriggerEvent(MonsterCard monsterCard, BuffEvent buffEvent)
+    //{
+    //    if (BuffDictionary.ContainsKey(monsterCard))
+    //    {
+    //        foreach (var buffInstance in BuffDictionary[monsterCard])
+    //        {
+    //            buffInstance.BuffBase.OnEventTriggered(monsterCard, buffEvent, buffInstance);
+    //        }
+    //    }
+    //}
     public void OnActionFinish(MonsterCard monsterCard)
     {
         //如果monsterCard有buff，遍历所有buff，调用OnActionFinish
@@ -114,7 +138,7 @@ public class BuffManager : Singleton<BuffManager>
             List<BuffInstance> buffsToRemove = new List<BuffInstance>();
             foreach (var buffInstance in BuffDictionary[monsterCard])
             {
-                buffInstance.OnActionFinish(monsterCard);
+                buffInstance.OnActionFinish(monsterCard, buffInstance);
                 if (buffInstance.RemainingRound == 0)
                 {
                     buffsToRemove.Add(buffInstance);
@@ -127,17 +151,30 @@ public class BuffManager : Singleton<BuffManager>
         }
     }
 
-    //在实例化Monster时订阅，单个monster触发事件时调用
-    public void TriggerEvent(MonsterCard monsterCard, BuffEvent buffEvent)
+
+    public void OnActionStart(MonsterCard monsterCard)
     {
         if (BuffDictionary.ContainsKey(monsterCard))
         {
             foreach (var buffInstance in BuffDictionary[monsterCard])
             {
-                buffInstance.BuffBase.OnEventTriggered(monsterCard, buffEvent, buffInstance);
+                buffInstance.OnActionStart(monsterCard, buffInstance);
             }
         }
     }
+
+    public void OnAttack(MonsterCard monsterCard, MonsterCard target)
+    {
+        if (BuffDictionary.ContainsKey(monsterCard))
+        {
+            foreach (var buffInstance in BuffDictionary[monsterCard])
+            {
+                buffInstance.OnAttack(monsterCard, target, buffInstance);
+            }
+        }
+    }
+
+
     #endregion
 
     #region 帮助方法

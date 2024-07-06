@@ -54,7 +54,7 @@ public class UIUnitStatus : View
             }
             else if (monsterCard.AttackBoost < 0)
             {
-                m_HP.color = Color.red;
+                m_Atk.color = Color.red;
             }
 
             m_HP.text = monsterCard.Hp.ToString();

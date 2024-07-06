@@ -84,7 +84,7 @@ public class Spell : View
                 effect.Cast(targetCard);
             }
             //Buff使用Buff系统
-            else
+            else if (Consts.BuffNames.Contains(effectName))
             {
                 //Buff法术
                 int BuffRound = int.Parse(effectDetails[1]);
@@ -92,6 +92,10 @@ public class Spell : View
                //根据Buff效果添加Buff
                 BuffBase buff = Game.Instance.BuffManager.GetBuff(effectName);
                 Game.Instance.BuffManager.AddBuffToMonster(targetCard, buff);
+            }
+            else
+            {
+                Debug.LogError("法术效果不存在");
             }
 
 

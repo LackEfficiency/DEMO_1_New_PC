@@ -34,6 +34,7 @@ public class BuffAtkIncreByDmg : BuffBase
     public override void RemoveBuff(MonsterCard monsterCard, BuffInstance buffInstance)
     {
         monsterCard.IncreaseDamage(-buffInstance.GetAccumulatedEffect());
+        buffInstance.AccumulatedEffect = 0;
     }
 
     public override void UpdateBuff(MonsterCard monsterCard, BuffInstance buffInstance)
@@ -47,27 +48,15 @@ public class BuffAtkIncreByDmg : BuffBase
     #endregion
 
     #region 事件回调
-
-    public override void OnActionFinish(MonsterCard monsterCard, BuffInstance instance)
+    public override void OnAttack(MonsterCard monsterCard, MonsterCard target, BuffInstance instance)
     {
-        // 减少回合数的处理在BuffInStance中统一处理
-        // 这里只处理其他逻辑
+        //每完成一次攻击，增加攻击力
+        monsterCard.IncreaseDamage(m_AtkIncre);
+
+        // 计算累计效果
+        instance.AccumulateEffect(m_AtkIncre);
     }
 
-
-    public override void OnEventTriggered(MonsterCard monsterCard, BuffEvent buffEvent, BuffInstance instance)
-    {
-        if (buffEvent == BuffEvent.OnAttack)
-        {
-            //每完成一次攻击，增加攻击力
-            monsterCard.IncreaseDamage(m_AtkIncre);
-
-            // 计算累计效果
-            instance.AccumulateEffect(m_AtkIncre); 
-
-        }
-        //所有Buff都需要处理OnActionFinish,因此单独处理
-    }
 
 
     #endregion

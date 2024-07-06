@@ -64,7 +64,8 @@ public class UIButtonBattle : View
         isShovelMode = !isShovelMode;
         if (isShovelMode)
         {
-            Cursor.SetCursor(shovelCursor, Vector2.zero, CursorMode.Auto);
+            Vector2 hotspot = new Vector2(shovelCursor.width / 2, shovelCursor.height / 2);
+            Cursor.SetCursor(shovelCursor, hotspot, CursorMode.Auto);
             //开始监听地图点击事件
             m_Map.OnTileClick += Map_OnRemoveClick;
         }

@@ -54,9 +54,9 @@ public class UIInformationWindow : View
         {
             foreach (var skillInstance in SkillInstances)
             {
-                Instantiate(skillText, content);
-                skillText.transform.localScale = new Vector3(1f, 1f, 1f);
-                skillText.GetComponent<TextMeshProUGUI>().text = skillInstance.SkillBase.SkillName;
+                TextMeshProUGUI text = Instantiate(skillText, content);
+                text.transform.localScale = new Vector3(1f, 1f, 1f);
+                text.GetComponent<TextMeshProUGUI>().text = skillInstance.SkillBase.SkillName;
             }
         }
 
@@ -67,9 +67,9 @@ public class UIInformationWindow : View
         {
             foreach (var buffInstance in BuffInstances)
             {
-                Instantiate(buffText, content);
-                buffText.transform.localScale = new Vector3(1f, 1f, 1f);
-                buffText.GetComponent<TextMeshProUGUI>().text = buffInstance.BuffBase.BuffName + ": " + buffInstance.RemainingRound.ToString();
+                TextMeshProUGUI text = Instantiate(buffText, content);
+                text.transform.localScale = new Vector3(1f, 1f, 1f);
+                text.GetComponent<TextMeshProUGUI>().text = buffInstance.BuffBase.BuffName + ": " + buffInstance.RemainingRound.ToString();
                 
             }
         }
@@ -81,10 +81,11 @@ public class UIInformationWindow : View
     {
         pos.x += 300;
         scrollView.transform.position = pos;
-        scrollView.SetActive(true);
         MonsterCard = monsterCard;
+        monsterCard.Dead -= HideWindow;
         monsterCard.Dead += HideWindow;
         UpdateUI();
+        scrollView.SetActive(true);
     }
 
     public void Hide()

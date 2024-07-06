@@ -99,12 +99,16 @@ public static class Consts
     public static readonly string[] BuffNames = new string[]
     {
         "Brave1",
+        "Bleed1",
+        "Weaken05",
     };
 
     //SkillNames
     public static readonly string[] SkillNames = new string[]
     {
         "Brave1",
+        "Bleed1",
+        "Weaken05",
     };
 }
 

@@ -18,7 +18,7 @@ public class MonsterCard : Card
 
     //各类行为 用于BUFF更新
     public event Action<MonsterCard> OnMove;
-    public event Action<MonsterCard> OnAttack;
+    public event Action<MonsterCard, MonsterCard> OnAttack;
     public event Action<MonsterCard> OnDamage;
     public event Action<MonsterCard> OnDie;
     public event Action<MonsterCard> OnTakeDamage;
@@ -164,12 +164,11 @@ public class MonsterCard : Card
         set => monsterCardInfo = value;
     }
 
-    public int AttackBoost { get => AttackBoost1; set => AttackBoost1 = value; }
     public int BaseAttack { get => m_BaseAttack; set => m_BaseAttack = value; }
     public int MaxHp { get => m_MaxHp; set => m_MaxHp = value; }
     public int MoveRange { get => m_MoveRange; set => m_MoveRange = value; }
     public int AttackRange { get => m_AttackRange; set => m_AttackRange = value; }
-    public int AttackBoost1 { get => m_AttackBoost; set => m_AttackBoost = value; }
+    public int AttackBoost { get => m_AttackBoost; set => m_AttackBoost = value; }
     public int MaxHpBoost { get => m_MaxHpBoost; set => m_MaxHpBoost = value; }
 
 
@@ -252,7 +251,7 @@ public class MonsterCard : Card
                 //攻击事件
                 if (OnAttack != null)
                 {
-                    OnAttack(this);
+                    OnAttack(this, target);
                 }
 
                 //攻击造成伤害事件

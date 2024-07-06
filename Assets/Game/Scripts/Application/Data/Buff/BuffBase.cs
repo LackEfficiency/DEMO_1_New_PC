@@ -44,9 +44,17 @@ public abstract class BuffBase
     #endregion
 
     #region 事件回调
-    public abstract void OnActionFinish(MonsterCard monsterCard, BuffInstance buffInstance);
     //buff触发机制
-    public abstract void OnEventTriggered(MonsterCard monsterCard, BuffEvent buffEvent, BuffInstance instance);
+    //public abstract void OnEventTriggered(MonsterCard monsterCard, BuffEvent buffEvent, BuffInstance instance);
+
+    public virtual void OnAttack(MonsterCard monsterCard, MonsterCard target, BuffInstance instance) { }
+
+    public virtual void OnActionFinish(MonsterCard monsterCard, BuffInstance instance) { }
+
+    public virtual void OnActionStart(MonsterCard monsterCard, BuffInstance instance) { }
+
+
+
     #endregion
 
     #region 帮助方法

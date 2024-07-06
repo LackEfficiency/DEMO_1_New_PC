@@ -36,10 +36,14 @@ public class SkillManager : Singleton<SkillManager>
     public void Initialize()
     {
         SkillBrave skillBrave1 = new SkillBrave("Brave1", -1, SpellType.Self, 1);
+        SkillBleed skillBleed1 = new SkillBleed("Bleed1", -1, SpellType.Enemy, 1);
+        SkillWeaken skillWeaken05 = new SkillWeaken("Weaken05", -1, SpellType.Enemy, 0.5f);
         //添加更多
 
         //添加到字典
         AddSkill(skillBrave1);
+        AddSkill(skillBleed1);
+        AddSkill(skillWeaken05);
     }
 
     public void AddSkill(SkillBase skill)
@@ -106,13 +110,13 @@ public class SkillManager : Singleton<SkillManager>
         }
     }
 
-    public void OnAttack(MonsterCard monsterCard)
+    public void OnAttack(MonsterCard monsterCard, MonsterCard monsterCard2)
     {
         if (SkillDictionary.ContainsKey(monsterCard))
         {
             foreach (var skillInstance in SkillDictionary[monsterCard])
             {
-                skillInstance.OnAttack(monsterCard);
+                skillInstance.OnAttack(monsterCard, monsterCard2);
             }
         }
     }

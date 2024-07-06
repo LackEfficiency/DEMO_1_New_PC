@@ -14,7 +14,7 @@ public class SkillInstance
 
     #region 字段
     private SkillBase skillBase;
-    private int remainCoolDown;
+    private int remainCoolDown; //-1表示无CD
     #endregion
 
     #region 属性
@@ -43,25 +43,25 @@ public class SkillInstance
 
     public void OnActionStart(MonsterCard monsterCard)
     {
-        if (RemainCoolDown == 0)
+        if (RemainCoolDown <= 0)
         {
             SkillBase.OnActionStart(monsterCard);
             RemainCoolDown = SkillBase.CoolDown;
         }
     }
 
-    public void OnAttack(MonsterCard monsterCard)
+    public void OnAttack(MonsterCard monsterCard, MonsterCard target)
     {
-        if (RemainCoolDown == 0)
+        if (RemainCoolDown <= 0)
         {
-            SkillBase.OnAttack(monsterCard);
+            SkillBase.OnAttack(monsterCard, target);
             RemainCoolDown = SkillBase.CoolDown;
         }
     }
 
     public void OnActionFinish(MonsterCard monsterCard)
     {
-        if (RemainCoolDown == 0)
+        if (RemainCoolDown <= 0)
         {
             SkillBase.OnActionFinish(monsterCard);
             RemainCoolDown = SkillBase.CoolDown;

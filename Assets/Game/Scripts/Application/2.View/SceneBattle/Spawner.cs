@@ -119,13 +119,9 @@ public class Spawner : View
         m_card.Player = player;
 
         //订阅Buff事件
-        m_card.OnAttack += (MonsterCard) => Game.Instance.BuffManager.TriggerEvent(m_card, BuffEvent.OnAttack);
-        m_card.OnTakeDamage += (MonsterCard) => Game.Instance.BuffManager.TriggerEvent(m_card, BuffEvent.OnTakeDamage);
-        m_card.OnActionFinish += (MonsterCard) => Game.Instance.BuffManager.TriggerEvent(m_card, BuffEvent.OnActionFinish);
-        m_card.OnDie += (MonsterCard) => Game.Instance.BuffManager.TriggerEvent(m_card, BuffEvent.OnDie);
-        m_card.OnMove += (MonsterCard) => Game.Instance.BuffManager.TriggerEvent(m_card, BuffEvent.OnMove);
-        m_card.OnTakeHeal += (MonsterCard) => Game.Instance.BuffManager.TriggerEvent(m_card, BuffEvent.OnTakeHeal);
-        m_card.OnActionFinish += (MonsterCard) => Game.Instance.BuffManager.OnActionFinish(m_card);
+        m_card.OnAttack += Game.Instance.BuffManager.OnAttack;
+        m_card.OnActionFinish += Game.Instance.BuffManager.OnActionFinish;
+        m_card.OnActionStart += Game.Instance.BuffManager.OnActionStart;
 
         //初始化技能
         string[] skills = m_card.MonsterCardInfo.Skills.Split(' ');
@@ -136,12 +132,16 @@ public class Spawner : View
                 SkillBase skillBase = Game.Instance.SkillManager.GetSkill(skill);
                 Game.Instance.SkillManager.AddSkillToMonster(m_card, skillBase);
             }
+            else
+            {
+                Debug.LogError("技能不存在");
+            }
         }
 
         //订阅技能
-        m_card.OnActionFinish += (MonsterCard) => Game.Instance.SkillManager.OnActionFinish(m_card);
-        m_card.OnAttack += (MonsterCard) => Game.Instance.SkillManager.OnAttack(m_card);
-        m_card.OnActionStart += (Monster) => Game.Instance.SkillManager.OnActionStart(m_card);
+        m_card.OnActionFinish += Game.Instance.SkillManager.OnActionFinish;
+        m_card.OnAttack += Game.Instance.SkillManager.OnAttack;
+        m_card.OnActionStart += Game.Instance.SkillManager.OnActionStart;
 
         Vector3 pos = m_Map.GetPosition(tile);
         m_card.transform.position = pos;

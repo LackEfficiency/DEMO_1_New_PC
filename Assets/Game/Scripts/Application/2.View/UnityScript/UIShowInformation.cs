@@ -10,7 +10,7 @@ public class UIShowInformation : MonoBehaviour, IPointerEnterHandler, IPointerEx
     UIInformationWindow uIInformationWindow = null;
     bool hasEntered = false;
 
-    private void Start()
+    private void Awake()
     {
         uIInformationWindow = GameObject.Find("Canvas").transform.Find("UIInformationWindow").GetComponent<UIInformationWindow>();
     }

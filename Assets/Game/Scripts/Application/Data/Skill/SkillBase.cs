@@ -37,7 +37,7 @@ public abstract class SkillBase
     //有CD技能
 
     //攻击时触发的技能，通常是造成伤害追加伤害或者添加一个DeBuff
-    public virtual void OnAttack(MonsterCard monsterCard) { }
+    public virtual void OnAttack(MonsterCard monsterCard, MonsterCard target) { }
 
     //行动开始时触发的技能，例如治愈一名队友或者造成一次伤害
     public virtual void OnActionStart(MonsterCard monsterCard) { }
