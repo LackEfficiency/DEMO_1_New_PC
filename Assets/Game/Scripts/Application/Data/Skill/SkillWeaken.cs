@@ -28,6 +28,12 @@ public class SkillWeaken : SkillBase
     {
         //命名没有.的字符串
         BuffBase buff = Game.Instance.BuffManager.GetBuff("Weaken"+ m_WeakenValue.ToString().Replace(".", ""));
+        //当buff不存在时，报错
+        if (buff == null)
+        {
+            Debug.LogError("Weaken" + m_WeakenValue.ToString() + "不存在");
+            return;
+        }
         Game.Instance.BuffManager.AddBuffToMonster(target, buff);
     }
 

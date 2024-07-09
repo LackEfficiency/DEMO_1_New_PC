@@ -14,6 +14,8 @@ public class BuffManager : Singleton<BuffManager>
     #endregion
 
     #region 字段
+    private readonly object buffDictionaryLock = new object();
+
     //存放所有Buff类
     private Dictionary<string, BuffBase> m_Buffs = new Dictionary<string, BuffBase>();
 
@@ -41,6 +43,7 @@ public class BuffManager : Singleton<BuffManager>
         BuffAtkIncreByDmg buffBrave1FromSkill = new BuffAtkIncreByDmg("Brave1FromSkill", -1, true, 1);
         BuffBleed buffBleed1 = new BuffBleed("Bleed1", 10, false, 1);
         BuffWeaken buffWeaken05 = new BuffWeaken("Weaken05", 10, false, 0.5f);
+        BuffGuardian buffGuardianFromSkill = new BuffGuardian("GuardianFromSkill", -1, true);
         //添加更多
 
         //添加到字典
@@ -48,6 +51,7 @@ public class BuffManager : Singleton<BuffManager>
         AddBuff(buffBrave1FromSkill);
         AddBuff(buffBleed1);
         AddBuff(buffWeaken05);
+        AddBuff(buffGuardianFromSkill);
     }
 
     public void AddBuff(BuffBase buff)
@@ -69,49 +73,79 @@ public class BuffManager : Singleton<BuffManager>
 
     public void AddBuffToMonster(MonsterCard monsterCard, BuffBase buff)
     {
-        if (!BuffDictionary.ContainsKey(monsterCard))
+        lock (buffDictionaryLock)
         {
-            BuffDictionary.Add(monsterCard, new List<BuffInstance>());
-        }
-        
-        //如果buff可叠加，遍历所有buff，则添加新的buff
-        if (buff.BuffStackable)
-        {
-            BuffInstance newBuffInstance = new BuffInstance(buff);
-            newBuffInstance.Apply(monsterCard);
-            BuffDictionary[monsterCard].Add(newBuffInstance);
-        }   
-        //如果不可叠加，先检查是否存在相应Buff,若找到对应的Buff，刷新持续时间
-        //若找不到，则添加新的Buff
-        else if (!buff.BuffStackable)
-        {
-            bool find = false;
-            foreach (var buffInstance in BuffDictionary[monsterCard])
+            if (!BuffDictionary.ContainsKey(monsterCard))
             {
-                
-                if (buffInstance.BuffBase.BuffName == buff.BuffName)
-                {
-                    buffInstance.RemainingRound = buff.BuffRound;
-                    find = true;
-                }
+                BuffDictionary.Add(monsterCard, new List<BuffInstance>());
             }
-            if (find == false)
+            //如果buff可叠加，遍历所有buff，则添加新的buff
+            if (buff.BuffStackable)
             {
                 BuffInstance newBuffInstance = new BuffInstance(buff);
                 newBuffInstance.Apply(monsterCard);
                 BuffDictionary[monsterCard].Add(newBuffInstance);
             }
+            //如果不可叠加，先检查是否存在相应Buff,若找到对应的Buff，刷新持续时间
+            //若找不到，则添加新的Buff
+            else if (!buff.BuffStackable)
+            {
+                bool find = false;
+                foreach (var buffInstance in BuffDictionary[monsterCard])
+                {
+
+                    if (buffInstance.BuffBase.BuffName == buff.BuffName)
+                    {
+                        buffInstance.RemainingRound = buff.BuffRound;
+                        find = true;
+                    }
+                }
+                if (find == false)
+                {
+                    BuffInstance newBuffInstance = new BuffInstance(buff);
+                    newBuffInstance.Apply(monsterCard);
+                    BuffDictionary[monsterCard].Add(newBuffInstance);
+                }
+            }
+        }
+
+    }
+
+    //移除所有buff
+    public void RemoveAllBuff(MonsterCard monsterCard)
+    {
+        lock (buffDictionaryLock)
+        {
+            if (!BuffDictionary.ContainsKey(monsterCard))
+            {
+                return;
+            }
+            List<BuffInstance> buffsToRemove = new List<BuffInstance>();
+            //移除这个单位的所有buff
+            foreach (var buffInstance in BuffDictionary[monsterCard])
+            {
+                buffsToRemove.Add(buffInstance);
+            }
+            foreach (var buffToRemove in buffsToRemove)
+            {
+                BuffDictionary[monsterCard].Remove(buffToRemove);
+            }
+            //移除这个卡
+            BuffDictionary.Remove(monsterCard);
         }
     }
 
     //传入卡牌 获取身上的所有buff
     public List<BuffInstance> GetBuffOnCard(MonsterCard monsterCard)
     {
-        if (BuffDictionary.ContainsKey(monsterCard))
+        lock (buffDictionaryLock)
         {
-            return BuffDictionary[monsterCard];
+            if (BuffDictionary.ContainsKey(monsterCard))
+            {
+                return BuffDictionary[monsterCard];
+            }
+            return null;
         }
-        return null;
     }
     #endregion
 
@@ -132,21 +166,27 @@ public class BuffManager : Singleton<BuffManager>
     //}
     public void OnActionFinish(MonsterCard monsterCard)
     {
-        //如果monsterCard有buff，遍历所有buff，调用OnActionFinish
-        if (BuffDictionary.ContainsKey(monsterCard))
+        lock (buffDictionaryLock)
         {
-            List<BuffInstance> buffsToRemove = new List<BuffInstance>();
-            foreach (var buffInstance in BuffDictionary[monsterCard])
+            // 如果 monsterCard 有 buff，遍历所有 buff，调用 OnActionFinish
+            if (BuffDictionary.ContainsKey(monsterCard))
             {
-                buffInstance.OnActionFinish(monsterCard, buffInstance);
-                if (buffInstance.RemainingRound == 0)
+                List<BuffInstance> buffsToRemove = new List<BuffInstance>();
+                var buffs = BuffDictionary[monsterCard];
+                foreach (var buffInstance in buffs)
                 {
-                    buffsToRemove.Add(buffInstance);
+                    buffInstance.OnActionFinish(monsterCard, buffInstance);
+                    if (buffInstance.RemainingRound == 0)
+                    {
+                        buffsToRemove.Add(buffInstance);
+                    }
                 }
-            }
-            foreach (var buffToRemove in buffsToRemove)
-            {
-                BuffDictionary[monsterCard].Remove(buffToRemove);
+
+                // 在遍历完成后实际修改集合
+                foreach (var buffToRemove in buffsToRemove)
+                {
+                    buffs.Remove(buffToRemove);
+                }
             }
         }
     }

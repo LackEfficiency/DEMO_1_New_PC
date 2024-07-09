@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
@@ -47,6 +48,11 @@ public class MonsterCard : Card
 
     private int m_AttackBoost; //攻击力增加
     private int m_MaxHpBoost; //最大生命值增加
+
+    //技能用属性
+    private int m_IsGuardian; //是否触发守护状态 优先进行攻击 范围内不存在可攻击对象时 再进行移动
+    //大于0则存在守护状态
+    
 
     #endregion
 
@@ -170,6 +176,7 @@ public class MonsterCard : Card
     public int AttackRange { get => m_AttackRange; set => m_AttackRange = value; }
     public int AttackBoost { get => m_AttackBoost; set => m_AttackBoost = value; }
     public int MaxHpBoost { get => m_MaxHpBoost; set => m_MaxHpBoost = value; }
+    public int IsGuardian { get => m_IsGuardian; set => m_IsGuardian = value; }
 
 
 
@@ -358,12 +365,18 @@ public class MonsterCard : Card
         this.Dead += Die;
         //初始化额外攻击力
         this.AttackBoost = 0;
+        //重置Buff
+        Game.Instance.BuffManager.RemoveAllBuff(this);
+
+        //重置技能
+        Game.Instance.SkillManager.RemoveAllSkills(this);
     }
 
     public override void OnUnspawn()
     {
         base.OnUnspawn();
 
+        //移除事件
         while (StatusChanged != null)
         {
             StatusChanged -= StatusChanged;
@@ -415,7 +428,7 @@ public class MonsterCard : Card
         {
             OnActionStart -= OnActionStart;
         }
-   
+        
     }
     #endregion
 

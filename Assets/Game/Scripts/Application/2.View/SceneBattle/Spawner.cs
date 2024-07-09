@@ -123,6 +123,8 @@ public class Spawner : View
         m_card.OnActionFinish += Game.Instance.BuffManager.OnActionFinish;
         m_card.OnActionStart += Game.Instance.BuffManager.OnActionStart;
 
+
+
         //初始化技能
         string[] skills = m_card.MonsterCardInfo.Skills.Split(' ');
         foreach (string skill in skills)
@@ -170,10 +172,6 @@ public class Spawner : View
         }
     }
 
-    private void M_card_OnActionFinish(MonsterCard obj)
-    {
-        throw new NotImplementedException();
-    }
 
     void Card_Dead(Card card)
     {

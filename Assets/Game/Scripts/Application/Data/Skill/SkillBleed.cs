@@ -30,6 +30,12 @@ public class SkillBleed : SkillBase
     public override void OnAttack(MonsterCard monsterCard, MonsterCard target)
     {
         BuffBase buff = Game.Instance.BuffManager.GetBuff("Bleed" + m_BleedValue.ToString());
+        //当buff不存在时，报错
+        if (buff == null)
+        {
+            Debug.LogError("Bleed" + m_BleedValue.ToString() + "不存在");
+            return;
+        }
         Game.Instance.BuffManager.AddBuffToMonster(target, buff);
     }
 

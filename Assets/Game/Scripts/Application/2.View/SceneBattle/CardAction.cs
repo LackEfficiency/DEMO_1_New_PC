@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
@@ -23,12 +25,14 @@ class CardAction : View
     RoundModel rModel = null;
     PlayerModel pModel = null;
     GameModel gModel = null;
-    int targetX;
-    TileBattle targetTile;
 
     private Queue<MonsterCard> cardQueue = new Queue<MonsterCard>(); // 存储需要移动的卡片队列
     private Queue<TileBattle> tiles = new Queue<TileBattle>(); //存储对应的卡片格子
     Player player;
+
+    //判断是否完成移动和攻击 用于部分技能的实现
+    int m_remainingMove = 0;
+    bool IsAttacked = false;
     #endregion
 
     #region 属性
@@ -39,32 +43,8 @@ class CardAction : View
     #endregion
 
     #region 方法
-    //检测卡牌移动是否完成
-    bool GetIsCardMoving(MonsterCard card)
-    {
-        return card.IsCardMoving;
-    }
 
-    //检测卡牌攻击是否完成
-    bool GetIsCardAttack(MonsterCard card)
-    {
-        return card.IsCardAttacking;
-    }
-
-    bool GetIsAllCardMoved(Player player)
-    {
-        if (player == Player.Self)
-        {
-            foreach (GameObject go in rModel.PlayerSummonList)
-            {
-                if (go.GetComponent<MonsterCard>().IsCardMoving)
-                    return false;
-            }
-        }
-        return true;
-    }
-
-    //移动卡片逻辑控制
+    //移动卡片动画控制
     IEnumerator MoveCard(MonsterCard card, Vector3 targetPosition) //传入被移动卡片和目标位置
     {
         //动画控制
@@ -73,12 +53,51 @@ class CardAction : View
         yield return new WaitWhile(() => GetIsCardMoving(card));
         Debug.Log("Card moved successfully.");
     }
-    
+
+
+    //移动卡牌到目标位置
+    private IEnumerator MoveCardToTile(MonsterCard card, TileBattle startTile, int targetX, int targetY)
+    {
+        TileBattle targetTile = m_Map.GetTile(targetX, targetY);
+        if (targetTile != null && targetX != startTile.X)
+        {
+            Vector3 targetPosition = m_Map.GetPosition(targetTile);
+            yield return StartCoroutine(MoveCard(card, targetPosition));
+
+            //更新卡牌位置
+            targetTile.Card = startTile.Card;
+            startTile.Card = null;
+        }
+    }
+
+    //根据剩余可移动距离移动卡片 需要进行两次调用 移动->攻击->移动
+    private IEnumerator MoveCardWithRemainingDistance(MonsterCard card, TileBattle startTile, int remainingMove, Player player)
+    {
+        if (remainingMove == 0) yield break;
+
+        //获取移动距离
+        int moveRange = remainingMove;
+        int targetX = GetTargetX(startTile.X, moveRange, player);
+
+        //查看是否有敌方阻挡
+        targetX = CheckEnemyObstruction(startTile.X, startTile.Y, targetX, player);
+
+        //当路径上没有敌方单位阻挡后，再次检查是否有自己的单位阻挡
+        targetX = CheckSelfObstruction(startTile.X, startTile.Y, targetX, player);
+
+        //修改剩余可移动距离
+        m_remainingMove = moveRange - Mathf.Abs(targetX - startTile.X);
+
+        //移动到目标位置
+        yield return StartCoroutine(MoveCardToTile(card, startTile, targetX, startTile.Y));
+    }
+
+
     //卡片攻击逻辑控制
-    IEnumerator CardAttack(MonsterCard card, TileBattle targetTile) //传入需要进行攻击的卡牌以及卡牌所处的格子
+    IEnumerator CardAttack(MonsterCard card, TileBattle startTile) //传入需要进行攻击的卡牌以及卡牌所处的格子
     {
         //找到攻击目标
-        List<TileBattle> attackTargets = GetCardsBeAttacked(card, targetTile);
+        List<TileBattle> attackTargets = GetCardsBeAttacked(card, startTile);
         //一般而言，攻击目标只有一个，但是也有可能有多个，这里暂时只考虑一个攻击目标的情况
         //TODO:多个攻击目标的情况
         if (attackTargets.Count == 0)
@@ -108,9 +127,12 @@ class CardAction : View
 
         //获取攻击目标的位置和当前卡牌的位置
         card.NextDes = m_Map.GetPosition(attackTargets[0]);
-        card.CurPos = m_Map.GetPosition(targetTile);
+        card.CurPos = m_Map.GetPosition(startTile);
         yield return new WaitWhile(() => GetIsCardAttack(card)); //等待攻击动画完成
         Debug.Log("Card attacked successfully.");
+
+        //攻击完成
+        IsAttacked = true;
     } 
                                   
 
@@ -122,100 +144,64 @@ class CardAction : View
             yield break; // 如果队列为空，则退出协程
         }
 
-        TileBattle tile = tiles.Dequeue(); // 从队列中取出卡牌所在的格子
-        MonsterCard targetCard = cardQueue.Dequeue(); // 从队列中取出卡片
+        TileBattle startTile = tiles.Dequeue(); // 从队列中取出卡牌所在的格子
+        MonsterCard ActionCard = cardQueue.Dequeue(); // 从队列中取出卡片
 
-        //获取移动距离
-        int moveRange = targetCard.MoveRange;
-
-        // 计算移动目标最远位置 防止超出地图边界
-        if (player == Player.Self)
-            targetX = Mathf.Min(tile.X + moveRange, MapBattle.ColumnCount - 2);
-        else
-            targetX = Mathf.Max(tile.X - moveRange, 1);
-
-
-        //查看是否有敌方阻挡 如果没有阻挡 则完成循环不改变targetX的值
-        if (player == Player.Self)
+        //各种意外情况导致卡牌死亡
+        if (startTile.Card == null)
         {
-            int curX = tile.X + 1;
-            while (curX <= targetX)
+            Debug.LogError("卡片不存在");    
+            StartCoroutine(MoveNextCard()); // 移动下一个卡片
+        }
+
+        //初始化移动距离
+        m_remainingMove = ActionCard.MoveRange;
+
+        //首先得判断是否有守护者
+        if (ActionCard.IsGuardian > 0)
+        {
+            //有守护者则先进行攻击判定
+            yield return StartCoroutine(CardAttack(ActionCard, startTile));
+
+            //攻击完成后再进行移动判定
+            //只有当不存在攻击目标时才进行移动
+            List<TileBattle> attackTargets = GetCardsBeAttacked(ActionCard, startTile);
+            if (attackTargets.Count == 0) 
             {
-                TileBattle curtile = m_Map.GetTile(curX, tile.Y);
-                if (curtile.Card)
-                {   //找到第一个阻挡对象就立即终止循环
-                    if (curtile.Card.GetComponent<Card>().player == Player.Enemy)
-                    {
-                        //记录当前中止的位置后一位
-                        targetX = curX - 1;
-                        break;
-                    }
-                }
-                curX += 1;
+                yield return StartCoroutine(MoveCardWithRemainingDistance(ActionCard, startTile, m_remainingMove, player));
+                //更新卡牌位置
+                startTile = GetTileUnderCard(ActionCard);
+            }
+            //如果还未进行攻击，可以再次进行攻击判定
+            if (!IsAttacked)
+            {
+                yield return StartCoroutine(CardAttack(ActionCard, startTile));
             }
         }
-        else if (player == Player.Enemy)
+        //没有守护者
+        else if (ActionCard.IsGuardian <= 0)
         {
-            int curX = tile.X - 1;
-            while (curX >= targetX)
-            {
-                TileBattle curtile = m_Map.GetTile(curX, tile.Y);
-                if (curtile.Card)
-                {   //找到第一个阻挡对象就立即终止循环
-                    if (curtile.Card.GetComponent<Card>().player == Player.Self)
-                    {
-                        //记录当前中止的位置后一位
-                        targetX = curX + 1;
-                        break;
-                    }
-                }
-                curX -= 1;
-            }
+            //第一次移动判断 这里的可移动距离是卡牌的移动距离属性
+            yield return StartCoroutine(MoveCardWithRemainingDistance(ActionCard, startTile, m_remainingMove, player));
+            //更新卡牌位置
+            startTile = GetTileUnderCard(ActionCard);
+
+            //攻击判定
+            yield return StartCoroutine(CardAttack(ActionCard, startTile));
+
+            // 第二次移动判断 这里的可移动距离是剩余可移动距离
+            yield return StartCoroutine(MoveCardWithRemainingDistance(ActionCard, startTile, m_remainingMove, player));
         }
 
-        //当路径上没有敌方单位阻挡后，再次检查是否有自己的单位阻挡
-        //查看是否有其他阻挡
-        while (targetX != tile.X)
-        {
-            targetTile = m_Map.GetTile(targetX, tile.Y);
-            if (targetTile.Card) //如果有阻挡 则向后找寻一个格子
-            {
-                if (player == Player.Self)
-                    targetX -= 1;
-                else
-                    targetX += 1;
-            }
-            else
-            {
-                break;
-            }
-        }
-        
-        // 移动卡片到目标位置
-        if (targetTile != null && targetX != tile.X)
-        {
-            Vector3 targetPosition = m_Map.GetPosition(targetTile);
-           // Debug.Log(targetPosition);
-            yield return StartCoroutine(MoveCard(targetCard, targetPosition));
-            //更新
-            targetTile.Card = tile.Card;
-            tile.Card = null;
+        ActionCard.ActionFinish(); //卡行动结束
 
-            //进行了移动，卡牌处于新位置
-            //进入战斗
-            yield return StartCoroutine(CardAttack(targetCard, targetTile));
-        }
-        else if (targetTile != null && targetX == tile.X) 
-        {
-            //没有进行移动，卡牌处于原位置
-            //进入战斗
-            yield return StartCoroutine(CardAttack(targetCard, tile));
-        }
-
-        targetCard.ActionFinish(); //卡行动结束
+        //重置参数
+        m_remainingMove = 0;
+        IsAttacked = false;
 
         StartCoroutine(MoveNextCard()); // 移动下一个卡片
     }
+
     #endregion
 
     #region Unity回调
@@ -307,6 +293,67 @@ class CardAction : View
         return sortedTiles;
     }
 
+    //获取目标位置 不考虑阻挡
+    //返回目标位置的X坐标
+    private int GetTargetX(int startX, int moveRange, Player player)
+    {
+        if (player == Player.Self)
+            return Mathf.Min(startX + moveRange, MapBattle.ColumnCount - 2);
+        else
+            return Mathf.Max(startX - moveRange, 1);
+    }
+
+    //检查敌方阻挡
+    //返回目标位置的X坐标
+    private int CheckEnemyObstruction(int startX, int startY, int targetX, Player player)
+    {
+        if (player == Player.Self)
+        {
+            for (int curX = startX + 1; curX <= targetX; curX++)
+            {
+                TileBattle curtile = m_Map.GetTile(curX, startY);
+                if (curtile.Card && curtile.Card.GetComponent<Card>().player == Player.Enemy)
+                {
+                    return curX - 1;
+                }
+            }
+        }
+        else if (player == Player.Enemy)
+        {
+            for (int curX = startX - 1; curX >= targetX; curX--)
+            {
+                TileBattle curtile = m_Map.GetTile(curX, startY);
+                if (curtile.Card && curtile.Card.GetComponent<Card>().player == Player.Self)
+                {
+                    return curX + 1;
+                }
+            }
+        }
+        return targetX;
+    }
+
+    //检查自己阻挡
+    //返回目标位置的X坐标
+    private int CheckSelfObstruction(int startX, int startY, int targetX, Player player)
+    {
+        while (targetX != startX)
+        {
+            TileBattle targetTile = m_Map.GetTile(targetX, startY); // Ensure startTile is updated in each iteration
+            if (targetTile.Card)
+            {
+                if (player == Player.Self)
+                    targetX -= 1;
+                else
+                    targetX += 1;
+            }
+            else
+            {
+                break;
+            }
+        }
+        return targetX;
+    }
+
     //获取卡牌攻击目标
     public List<TileBattle> GetCardsBeAttacked(MonsterCard card, TileBattle tile) //传入需要攻击的卡片和卡片所在的格子
     {
@@ -315,9 +362,57 @@ class CardAction : View
         int attackRange = card.AttackRange;
         int direction = card.Player == Player.Self ? 1 : -1;
 
+        //当卡牌有守护者技能时 可以向后 以及上下两排 寻找攻击目标
+        int[] rows = { 0, 1, -1 };
+        if (card.IsGuardian > 0)
+        {
+            //先搜索身后 然后是上下两排 往前搜索
+            for (int i = attackRange; i >= 0; i--)
+            {   
+                foreach (int j in rows)
+                {
+                    int targetX = tile.X - (i * direction);  // 向后搜索
+                    int targetY = tile.Y + j;
+
+                    if (targetX < 0 || targetX >= MapBattle.ColumnCount || targetY < 0 || targetY >= MapBattle.RowCount)
+                    {
+                        continue;  // 跳过越界的坐标
+                    }
+                    TileBattle targetTile = m_Map.GetTile(targetX, targetY);
+
+                    //可以攻击玩家
+                    if (targetX == 0 || targetX == MapBattle.ColumnCount - 1)
+                    {
+                        if (card.Player == Player.Self && targetX == MapBattle.ColumnCount - 1 ||
+                            card.Player == Player.Enemy && targetX == 0)
+                            attackTarget.Add(targetTile);
+                        break;
+                    }
+
+                    //可以攻击敌方卡牌
+                    if (targetTile.Card)
+                    {
+                        MonsterCard targetCard = targetTile.Card.GetComponent<MonsterCard>();
+                        if ((card.Player == Player.Self && targetCard.Player == Player.Enemy) ||
+                            (card.Player == Player.Enemy && targetCard.Player == Player.Self))
+                        {
+                            attackTarget.Add(targetTile);
+                        }
+                    }
+                }
+            }
+        } 
+
+        //向前搜索
+        //TODO:有可能存在能攻击多行的情况
         for (int i = 1; i <= attackRange; i++)
         {
             int targetX = tile.X + (i * direction);
+
+            if (targetX < 0 || targetX >= MapBattle.ColumnCount)
+            {
+                continue;  // 跳过越界的坐标
+            }
             TileBattle targetTile = m_Map.GetTile(targetX, tile.Y);
 
             //可以攻击玩家
@@ -343,6 +438,46 @@ class CardAction : View
 
         return attackTarget;
     }
+
+    //检测卡牌移动是否完成
+    bool GetIsCardMoving(MonsterCard card)
+    {
+        return card.IsCardMoving;
+    }
+
+    //检测卡牌攻击是否完成
+    bool GetIsCardAttack(MonsterCard card)
+    {
+        return card.IsCardAttacking;
+    }
+
+    bool GetIsAllCardMoved(Player player)
+    {
+        if (player == Player.Self)
+        {
+            foreach (GameObject go in rModel.PlayerSummonList)
+            {
+                if (go.GetComponent<MonsterCard>().IsCardMoving)
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    //获取卡牌所处的格子
+    public TileBattle GetTileUnderCard(MonsterCard card)
+    {
+        foreach (TileBattle tile in m_Map.Grid)
+        {
+            if (tile.Card == card.gameObject)
+            {
+                return tile;
+            }
+        }
+        return null;
+    }
+
+
     #endregion
 
 

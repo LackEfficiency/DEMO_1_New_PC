@@ -300,8 +300,15 @@ public class RoundModel : Model
             e.nums = 3;
         else
             e.nums = 1;
-        SendEvent(Consts.E_DrawCard, e); //发送抽卡事件
-        SendEvent(Consts.E_ShowDrawCard, e); //发送展示事件
+        
+        //防止手牌超过上限
+        e.nums = Math.Min(e.nums, 7 - PlayerHandList.Count);
+   
+        if (e.nums > 0)
+        {
+            SendEvent(Consts.E_DrawCard, e); //发送抽卡事件
+            SendEvent(Consts.E_ShowDrawCard, e); //发送展示事件
+        }
 
         //第二步所有卡牌cost减一
         CostReduceArgs e0 = new CostReduceArgs();
@@ -462,5 +469,6 @@ public class RoundModel : Model
     #endregion
 
     #region 帮助方法
+
     #endregion
 }

@@ -38,12 +38,14 @@ public class SkillManager : Singleton<SkillManager>
         SkillBrave skillBrave1 = new SkillBrave("Brave1", -1, SpellType.Self, 1);
         SkillBleed skillBleed1 = new SkillBleed("Bleed1", -1, SpellType.Enemy, 1);
         SkillWeaken skillWeaken05 = new SkillWeaken("Weaken05", -1, SpellType.Enemy, 0.5f);
+        SkillGuardian skillGuardian = new SkillGuardian("Guardian", -1, SpellType.Self);
         //添加更多
 
         //添加到字典
         AddSkill(skillBrave1);
         AddSkill(skillBleed1);
         AddSkill(skillWeaken05);
+        AddSkill(skillGuardian);
     }
 
     public void AddSkill(SkillBase skill)
@@ -92,6 +94,28 @@ public class SkillManager : Singleton<SkillManager>
             return SkillDictionary[monsterCard];
         }
         return null;
+    }
+
+    //移除所有技能
+    public void RemoveAllSkills(MonsterCard monsterCard)
+    {
+        if (!SkillDictionary.ContainsKey(monsterCard))
+        {
+            return;
+        }
+        //移除这个单位的所有技能
+        List<SkillInstance> skillsToRemove = new List<SkillInstance>();
+
+        foreach (var skillInstance in SkillDictionary[monsterCard])
+        {
+            skillsToRemove.Add(skillInstance);
+        }
+        foreach (var skillInstance in skillsToRemove)
+        {
+            SkillDictionary[monsterCard].Remove(skillInstance);
+        }
+        //移除这个卡
+        SkillDictionary.Remove(monsterCard);
     }
     #endregion
 

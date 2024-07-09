@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class SkillBrave : SkillBase
+public class SkillGuardian : SkillBase
 {
+
 
     #region 常量
     #endregion
@@ -11,28 +12,24 @@ public class SkillBrave : SkillBase
     #endregion
 
     #region 字段
-    int m_BraveValue;
     #endregion
 
     #region 属性
-    public int BraveValue { get => m_BraveValue; set => m_BraveValue = value; }
     #endregion
 
     #region 方法
-    public SkillBrave(string skillName, int coolDown, SpellType spellType, int braveValue) : base(skillName, coolDown, spellType)
+    public SkillGuardian(string skillName, int coolDown, SpellType spellType) : base(skillName, coolDown, spellType)
     {
-        m_BraveValue = braveValue;
+
     }
-
-
 
     public override void Activate(MonsterCard monsterCard)
     {
-        BuffBase buff = Game.Instance.BuffManager.GetBuff("Brave"+ m_BraveValue.ToString()+ "FromSkill");
+        BuffBase buff = Game.Instance.BuffManager.GetBuff("Guardian" + "FromSkill");
         //当buff不存在时，报错
         if (buff == null)
         {
-            Debug.LogError("Brave" + m_BraveValue.ToString() + "FromSkill" + "不存在");
+            Debug.LogError("Guardian" + "FromSkill" + "不存在");
             return;
         }
         Game.Instance.BuffManager.AddBuffToMonster(monsterCard, buff);

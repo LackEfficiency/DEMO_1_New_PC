@@ -100,7 +100,10 @@ public static class Consts
     {
         "Brave1",
         "Bleed1",
+        "Brave1FromSkill",
         "Weaken05",
+        "Guardian",
+        "GuardianFromSkill",
     };
 
     //SkillNames
@@ -109,6 +112,7 @@ public static class Consts
         "Brave1",
         "Bleed1",
         "Weaken05",
+        "Guardian",
     };
 }
 
