@@ -252,6 +252,8 @@ public class MapBattle : MonoBehaviour
     void Map_OnTileClick(object sender, TileBattleClickEventArgs e)
     {
         //当前场景不是LevelBuilder则不能编辑
+
+
         if (gameObject.scene.name != "LevelBuilder")
             return;
 

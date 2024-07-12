@@ -65,6 +65,18 @@ public class ObjectPool : Singleton<ObjectPool>
         m_pools.Add(pool.Name, pool);
     }
 
+
+    // 销毁所有对象 特殊情况调用
+    public void DestroyAll()
+    {
+        foreach (SubPool pool in m_pools.Values)
+        {
+            pool.DestroyAll();
+        }
+        m_pools.Clear();
+    }
+
+
     public void ClearAll() //特殊情况调用
     {
         m_pools = new Dictionary<string, SubPool>();

@@ -37,6 +37,9 @@ public class Game : ApplicationBase<Game>//游戏起点，初始化框架
         //发布退出事件
         SendEvent(Consts.E_ExitScene, e);
 
+        //销毁所有对象
+        ObjectPool.Instance.DestroyAll();
+
         //加载新场景
         SceneManager.LoadScene(level, LoadSceneMode.Single); //加载场景的方法
     }

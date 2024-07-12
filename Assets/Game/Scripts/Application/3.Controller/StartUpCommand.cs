@@ -18,6 +18,7 @@ public class StartUpCommand : Controller
         RegisterController(Consts.E_TurnEnd, typeof(TurnEndCommand));
         RegisterController(Consts.E_AddCardToEnemyHand, typeof(AddCardToEnemyHandCommand));
         RegisterController(Consts.E_CostReduce, typeof(ReduceCostCommand));
+        RegisterController(Consts.E_EndLevel, typeof(EndLevelCommand));
         //注册视图(view)需要在进入场景后动态注入
 
 

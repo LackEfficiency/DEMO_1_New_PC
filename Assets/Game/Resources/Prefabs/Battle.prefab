@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2946522193553226794}
   - component: {fileID: 4104935029071535850}
   - component: {fileID: 1572315912384357777}
-  - component: {fileID: 6402345742703943480}
   m_Layer: 0
   m_Name: Battle
   m_TagString: Untagged
@@ -98,16 +97,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47656cea08dd4764c838a7bfb0b1e935, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &6402345742703943480
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3921085398586862278}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6f6d83bfe995b144ad094ebcb3abb18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  zoomSize: 0

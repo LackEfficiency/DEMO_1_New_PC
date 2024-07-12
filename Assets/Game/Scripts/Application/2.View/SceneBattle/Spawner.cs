@@ -70,9 +70,10 @@ public class Spawner : View
             rModel.SelfSummoner.transform.position = position;
             rModel.SelfSummoner.Player = player;
             rModel.SelfSummoner.MaxHp = 100;
-            rModel.SelfSummoner.Hp = 40;
+            rModel.SelfSummoner.Hp = 10;
             rModel.SelfSummoner.RemainingCards = rModel.PlayerDeckList.Count;
             rModel.SelfSummoner.HandCards = rModel.PlayerHandList.Count;
+            rModel.SelfSummoner.Dead += Summoner_Dead;
             UpdateSummoner(rModel.SelfSummoner);
         }
         else if(player == Player.Enemy)
@@ -83,8 +84,8 @@ public class Spawner : View
             rModel.EnemySummoner.transform.position = position;
             rModel.EnemySummoner.Player = player;
             rModel.EnemySummoner.MaxHp = 100;
-            rModel.EnemySummoner.Hp = 40;
-
+            rModel.EnemySummoner.Hp = 10;
+            rModel.EnemySummoner.Dead += Summoner_Dead;
             //敌人卡组总数 从回合列表里找
             int totalCards = 0;
             foreach (Round round in rModel.Rounds)
@@ -204,6 +205,20 @@ public class Spawner : View
             }
         }   
         
+    }
+
+    void Summoner_Dead(Card card)
+    {
+        //游戏失败
+        if (card = rModel.SelfSummoner)
+        {
+            SendEvent(Consts.E_EndLevel, new EndLevelArgs() { LevelID = gModel.PlayLevelIndex, IsWin = false });
+        }
+        //游戏胜利
+        else if (card = rModel.EnemySummoner)
+        {
+            SendEvent(Consts.E_EndLevel, new EndLevelArgs() { LevelID = gModel.PlayLevelIndex, IsWin = true });
+        }
     }
 
     //展示信息

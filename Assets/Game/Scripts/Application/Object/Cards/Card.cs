@@ -22,6 +22,7 @@ public class Card: Reusable, IReusable
     bool m_PosState; //检测卡牌位置是否变化(从手牌移动到场上，场上移动到墓地），若为true，则发生变化
     private int m_Counter = 0; //在deckmanager场景中检测卡牌数量
     private CardInfo cardInfo; //卡牌信息
+    private CardType cardType; //卡牌类型
 
     #endregion
 
@@ -67,6 +68,8 @@ public class Card: Reusable, IReusable
         get => cardInfo;
         set => cardInfo = value;
     }
+
+    public CardType CardType { get => cardType; set => cardType = value; }
     #endregion
 
     #region 方法

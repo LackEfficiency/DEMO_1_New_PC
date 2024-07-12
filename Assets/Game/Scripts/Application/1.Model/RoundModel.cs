@@ -218,6 +218,23 @@ public class RoundModel : Model
         PlayerDeckList.RemoveRange(0, cardsToRemove);
     }
 
+    //清除所有数据
+    public void Clear()
+    {
+        m_AllRoundsComplete = false;
+        m_GamePhase = GamePhase.PlayerDraw;
+        m_PlayerDeckList.Clear();
+        m_PlayerSummonList.Clear();
+        m_PlayerGraveList.Clear();
+        m_PlayerHandList.Clear();
+        m_EnemyHandList.Clear();
+        m_EnemyGraveList.Clear();
+        m_EnemySummonList.Clear();
+        SelfSummoner = null;
+        EnemySummoner = null;
+        Game.Instance.StopAllCoroutines();
+    }
+
     public void StartRound()
     {
         Game.Instance.StartCoroutine(RunRound());

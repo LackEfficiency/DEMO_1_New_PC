@@ -213,6 +213,7 @@ class CardAction : View
         AttentionEvents.Add(Consts.E_EnterScene);
         AttentionEvents.Add(Consts.E_ActAUnit);
         AttentionEvents.Add(Consts.E_ActAll);
+        AttentionEvents.Add(Consts.E_EndLevel);
     }
 
     public override void HandleEvent(string eventName, object data = null)
@@ -258,6 +259,10 @@ class CardAction : View
 
                 //移动卡片，协程的最开始入口
                 StartCoroutine(MoveNextCard()); 
+                break;
+
+            case Consts.E_EndLevel:
+                StopAllCoroutines();
                 break;
 
             default: break;

@@ -52,6 +52,9 @@ public static class Consts
     public const string V_CardMove = "V_CardMove";
     public const string V_UIInformationWindow = "V_UIInformationWindow";
     public const string V_Summoner = "V_Summoner";
+    public const string V_Win = "V_Win";
+    public const string V_Lost = "V_Lost";
+
 
     //Controller
     public const string E_StartUp = "E_StartUp";
@@ -79,6 +82,7 @@ public static class Consts
     public const string E_ActAll = "E_ActAll"; //ActAllArgs
     public const string E_UseSpellCardRequest = "E_UseSpellCardRequest"; //UseSpellCardRequestArgs  
     public const string E_ConfirmSpell = "E_ConfirmSpell"; //ConfirmSpellArgs
+    public const string E_EndLevel = "E_EndLevel"; //EndLevelArgs
 
 
 
@@ -158,6 +162,7 @@ public enum CardType
 {
     Monster,
     Spell,
+    Summoner,
 }
 
 public enum CardStateBattle //战斗场景中卡牌状态

@@ -83,8 +83,13 @@ public class UICountRound : View
                 ShowRound();
                 break;
             case Consts.E_EnterScene:
-                rModel = GetModel<RoundModel>();
-                rModel.StartRound();
+                SceneArgs e0 = data as SceneArgs;
+                if (e0.SceneIndex == 3)
+                {
+                    rModel = GetModel<RoundModel>();
+                    rModel.StartRound();
+                }
+
                 break;
             default:
                 break;

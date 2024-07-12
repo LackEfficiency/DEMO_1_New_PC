@@ -157,7 +157,7 @@ public class GameModel : Model //´æ´¢ÓÎÏ·Êý¾Ý
             m_GameProgress = Saver.GetMapProgress();
 
         }
-        m_isPlaying = false;
+       // m_isPlaying = false;
 
     }
 

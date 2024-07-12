@@ -72,6 +72,17 @@ public class SubPool
         }
     }
 
+    //销毁所有对象
+    
+    public void DestroyAll()
+    {
+        foreach (GameObject go in m_objects)
+        {
+            GameObject.Destroy(go);
+        }
+        m_objects.Clear();
+    }
+
     //是否包含对象
     public bool Contains(GameObject go)
     {

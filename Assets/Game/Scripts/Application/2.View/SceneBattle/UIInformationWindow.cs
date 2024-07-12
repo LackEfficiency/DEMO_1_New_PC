@@ -115,7 +115,11 @@ public class UIInformationWindow : View
         {
             case Consts.E_EnterScene:
                 SceneArgs e0 = data as SceneArgs;
-                scrollView.SetActive(false);
+                if (e0.SceneIndex == 3)
+                {
+                    scrollView.SetActive(false);
+
+                }
                 break;
         }
 
