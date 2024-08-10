@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,22 +31,22 @@ public class SkillManager : Singleton<SkillManager>
     protected override void Awake()
     {
         base.Awake();
-        Initialize();
+        LoadBuffConfig();
     }
 
-    public void Initialize()
+    //加载技能配置
+    private void LoadBuffConfig()
     {
-        SkillBrave skillBrave1 = new SkillBrave("Brave1", -1, SpellType.Self, 1);
-        SkillBleed skillBleed1 = new SkillBleed("Bleed1", -1, SpellType.Enemy, 1);
-        SkillWeaken skillWeaken05 = new SkillWeaken("Weaken05", -1, SpellType.Enemy, 0.5f);
-        SkillGuardian skillGuardian = new SkillGuardian("Guardian", -1, SpellType.Self);
-        //添加更多
-
-        //添加到字典
-        AddSkill(skillBrave1);
-        AddSkill(skillBleed1);
-        AddSkill(skillWeaken05);
-        AddSkill(skillGuardian);
+        string json = File.ReadAllText(Consts.SkillDataDir);
+        SkillConfig skillConfig = JsonUtility.FromJson<SkillConfig>(json);
+        foreach (var skillData in skillConfig.skills)
+        {
+            SkillBase skill = CreateSkillFromData(skillData);
+            if (skill != null)
+            {
+                AddSkill(skill);
+            }
+        }
     }
 
     public void AddSkill(SkillBase skill)
@@ -158,5 +159,25 @@ public class SkillManager : Singleton<SkillManager>
     #endregion
 
     #region 帮助方法
+    //Skill工厂
+    private SkillBase CreateSkillFromData(SkillData data)
+    {
+        // 根据类型创建不同的技能实例
+        switch (data.type)
+        {
+            case "SkillBrave":
+                return new SkillBrave(data.name, data.duration, Enum.Parse<SpellType>(data.spellType), (int)data.value);
+            case "SkillBleed":
+                return new SkillBleed(data.name, data.duration, Enum.Parse<SpellType>(data.spellType), (int)data.value);
+            case "SkillWeaken":
+                return new SkillWeaken(data.name, data.duration, Enum.Parse<SpellType>(data.spellType), data.value);
+            case "SkillGuardian":
+                return new SkillGuardian(data.name, data.duration, Enum.Parse<SpellType>(data.spellType));
+            // 添加其他技能类型
+            default:
+                Debug.LogWarning("Unknown Skill type: " + data.type);
+                return null;
+        }
+    }
     #endregion
 }

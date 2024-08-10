@@ -1,0 +1,38 @@
+{
+  "buffs": [
+    {
+      "type": "BuffAtkIncreByDmg",
+      "name": "Brave1",
+      "duration": 10,
+      "stackable": true,
+      "value": 1
+    },
+    {
+      "type": "BuffAtkIncreByDmg",
+      "name": "Brave1FromSkill",
+      "duration": -1,
+      "stackable": true,
+      "value": 1
+    },
+    {
+      "type": "BuffBleed",
+      "name": "Bleed1",
+      "duration": 10,
+      "stackable": false,
+      "value": 1
+    },
+    {
+      "type": "BuffWeaken",
+      "name": "Weaken05",
+      "duration": 10,
+      "stackable": false,
+      "value": 0.5
+    },
+    {
+      "type": "BuffGuardian",
+      "name": "GuardianFromSkill",
+      "duration": -1,
+      "stackable": true
+    }
+  ]
+}

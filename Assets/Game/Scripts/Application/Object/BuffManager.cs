@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
@@ -34,25 +35,25 @@ public class BuffManager : Singleton<BuffManager>
     protected override void Awake()
     {
         base.Awake();
-        Initialize();
+        LoadBuffConfig();
     }
 
-    public void Initialize()
+
+    //通过配置文件加载Buff
+    private void LoadBuffConfig()
     {
-        BuffAtkIncreByDmg buffBrave1 = new BuffAtkIncreByDmg("Brave1", 10, true, 1);
-        BuffAtkIncreByDmg buffBrave1FromSkill = new BuffAtkIncreByDmg("Brave1FromSkill", -1, true, 1);
-        BuffBleed buffBleed1 = new BuffBleed("Bleed1", 10, false, 1);
-        BuffWeaken buffWeaken05 = new BuffWeaken("Weaken05", 10, false, 0.5f);
-        BuffGuardian buffGuardianFromSkill = new BuffGuardian("GuardianFromSkill", -1, true);
-        //添加更多
-
-        //添加到字典
-        AddBuff(buffBrave1);
-        AddBuff(buffBrave1FromSkill);
-        AddBuff(buffBleed1);
-        AddBuff(buffWeaken05);
-        AddBuff(buffGuardianFromSkill);
+        string json = File.ReadAllText(Consts.BuffDataDir);
+        BuffConfig buffConfig = JsonUtility.FromJson<BuffConfig>(json);
+        foreach (var buffData in buffConfig.buffs)
+        {
+            BuffBase buff = CreateBuffFromConfig(buffData);
+            if (buff != null)
+            {
+                AddBuff(buff);
+            }
+        }
     }
+
 
     public void AddBuff(BuffBase buff)
     {
@@ -218,5 +219,24 @@ public class BuffManager : Singleton<BuffManager>
     #endregion
 
     #region 帮助方法
+    //Buff工厂
+    private BuffBase CreateBuffFromConfig(BuffData data)
+    {
+        switch (data.type)
+        {
+            case "BuffAtkIncreByDmg":
+                return new BuffAtkIncreByDmg(data.name, data.duration, data.stackable, (int)data.value);
+            case "BuffBleed":
+                return new BuffBleed(data.name, data.duration, data.stackable, (int)data.value);
+            case "BuffWeaken":
+                return new BuffWeaken(data.name, data.duration, data.stackable, data.value);
+            case "BuffGuardian":
+                return new BuffGuardian(data.name, data.duration, data.stackable);
+            // 添加更多类型
+            default:
+                Debug.LogWarning("Unknown Buff type: " + data.type);
+                return null;
+        }
+    }
     #endregion
 }

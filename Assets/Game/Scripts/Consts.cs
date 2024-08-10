@@ -7,7 +7,15 @@ public static class Consts
     //关卡目录
     public static readonly string LevelDir = Application.dataPath + @"/Game/Resources/Res/Levels"; //application.datapath得到的是assets目录
     public static readonly string MapDir = Application.dataPath + @"/Game/Resources/Res/Maps";
+
+    //卡牌目录
+    //Resoruce.Load只能加载Resources目录下的资源 并且要使用相对路径
     public static readonly string CardDataDir = "Res/Datas";
+
+    //buff effect skill目录
+    public static readonly string BuffDataDir = Application.dataPath + @"/Game/Resources/Res/Datas/buffs.json";
+    public static readonly string EffectDataDir = Application.dataPath + @"/Game/Resources/Res/Datas/effects.json";
+    public static readonly string SkillDataDir = Application.dataPath + @"/Game/Resources/Res/Datas/skills.json";
 
     //存档
     public const string GameProgress = "GameProgress";

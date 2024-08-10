@@ -91,7 +91,7 @@ public class MapBattle : MonoBehaviour
             t.CanSetEnemy = true;
         }
 
-        //乙方单位放置位置
+        //己方单位放置位置
         for (int i = 0; i < level.Set.Count; i++)
         {
             Point p = level.Set[i];

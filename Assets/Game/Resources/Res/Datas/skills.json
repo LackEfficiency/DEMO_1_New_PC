@@ -1,0 +1,31 @@
+{
+  "skills": [
+    {
+      "type": "SkillBrave",
+      "name": "Brave1",
+      "duration": -1,
+      "spellType": "Self",
+      "value": 1
+    },
+    {
+      "type": "SkillBleed",
+      "name": "Bleed1",
+      "duration": -1,
+      "spellType": "Enemy",
+      "value": 1
+    },
+    {
+      "type": "SkillWeaken",
+      "name": "Weaken05",
+      "duration": -1,
+      "spellType": "Enemy",
+      "value": 0.5
+    },
+    {
+      "type": "SkillGuardian",
+      "name": "Guardian",
+      "duration": -1,
+      "spellType": "Self"
+    }
+  ]
+}

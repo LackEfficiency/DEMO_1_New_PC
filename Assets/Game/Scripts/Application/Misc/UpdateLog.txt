@@ -229,3 +229,6 @@ TODO:
 TODO:
 1.实现游戏暂停功能
 
+10/08/2024
+1.实现Buff, Effect, Skill的工厂模式创建实例
+2.把Skill, Effect和Buff 配置文件化

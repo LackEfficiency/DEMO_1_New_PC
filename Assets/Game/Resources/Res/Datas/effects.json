@@ -1,0 +1,52 @@
+{
+  "effects": [
+    {
+      "type": "DamageEffect",
+      "name": "Damage1",
+      "description": "Change Hp, both positive and negative",
+      "value": 1
+    },
+    {
+      "type": "DamageEffect",
+      "name": "Heal1",
+      "description": "Change Hp, both positive and negative",
+      "value": -1
+    },
+    {
+      "type": "DamageEffect",
+      "name": "Damage2",
+      "description": "Change Hp, both positive and negative",
+      "value": 2
+    },
+    {
+      "type": "DamageEffect",
+      "name": "Heal2",
+      "description": "Change Hp, both positive and negative",
+      "value": -2
+    },
+    {
+      "type": "DamageEffect",
+      "name": "Damage3",
+      "description": "Change Hp, both positive and negative",
+      "value": 3
+    },
+    {
+      "type": "DamageEffect",
+      "name": "Heal3",
+      "description": "Change Hp, both positive and negative",
+      "value": -3
+    },
+    {
+      "type": "DamageEffect",
+      "name": "Damage4",
+      "description": "Change Hp, both positive and negative",
+      "value": 4
+    },
+    {
+      "type": "DamageEffect",
+      "name": "Heal4",
+      "description": "Change Hp, both positive and negative",
+      "value": -4
+    }
+  ]
+}
