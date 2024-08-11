@@ -147,59 +147,66 @@ class CardAction : View
         TileBattle startTile = tiles.Dequeue(); // 从队列中取出卡牌所在的格子
         MonsterCard ActionCard = cardQueue.Dequeue(); // 从队列中取出卡片
 
-        //各种意外情况导致卡牌死亡
-        if (startTile.Card == null)
+        if (ActionCard.CantAction > 0) //如果卡片不可行动 则直接跳过当前卡牌
+        {
+            ActionCard.ActionFinish(); //但仍需触发卡片行动结束事件
+            StartCoroutine(MoveNextCard());
+        }        
+        else if (startTile.Card == null) //各种意外情况导致卡牌死亡
         {
             Debug.LogError("卡片不存在");    
             StartCoroutine(MoveNextCard()); // 移动下一个卡片
         }
-
-        //初始化移动距离
-        m_remainingMove = ActionCard.MoveRange;
-
-        //首先得判断是否有守护者
-        if (ActionCard.IsGuardian > 0)
+        else
         {
-            //有守护者则先进行攻击判定
-            yield return StartCoroutine(CardAttack(ActionCard, startTile));
+            //初始化移动距离
+            m_remainingMove = ActionCard.MoveRange;
 
-            //攻击完成后再进行移动判定
-            //只有当不存在攻击目标时才进行移动
-            List<TileBattle> attackTargets = GetCardsBeAttacked(ActionCard, startTile);
-            if (attackTargets.Count == 0) 
+            //首先得判断是否有守护者
+            if (ActionCard.IsGuardian > 0)
             {
+                //有守护者则先进行攻击判定
+                yield return StartCoroutine(CardAttack(ActionCard, startTile));
+
+                //攻击完成后再进行移动判定
+                //只有当不存在攻击目标时才进行移动
+                List<TileBattle> attackTargets = GetCardsBeAttacked(ActionCard, startTile);
+                if (attackTargets.Count == 0)
+                {
+                    yield return StartCoroutine(MoveCardWithRemainingDistance(ActionCard, startTile, m_remainingMove, player));
+                    //更新卡牌位置
+                    startTile = GetTileUnderCard(ActionCard);
+                }
+                //如果还未进行攻击，可以再次进行攻击判定
+                if (!IsAttacked)
+                {
+                    yield return StartCoroutine(CardAttack(ActionCard, startTile));
+                }
+            }
+            //没有守护者
+            else if (ActionCard.IsGuardian <= 0)
+            {
+                //第一次移动判断 这里的可移动距离是卡牌的移动距离属性
                 yield return StartCoroutine(MoveCardWithRemainingDistance(ActionCard, startTile, m_remainingMove, player));
                 //更新卡牌位置
                 startTile = GetTileUnderCard(ActionCard);
-            }
-            //如果还未进行攻击，可以再次进行攻击判定
-            if (!IsAttacked)
-            {
+
+                //攻击判定
                 yield return StartCoroutine(CardAttack(ActionCard, startTile));
+
+                // 第二次移动判断 这里的可移动距离是剩余可移动距离
+                yield return StartCoroutine(MoveCardWithRemainingDistance(ActionCard, startTile, m_remainingMove, player));
             }
-        }
-        //没有守护者
-        else if (ActionCard.IsGuardian <= 0)
-        {
-            //第一次移动判断 这里的可移动距离是卡牌的移动距离属性
-            yield return StartCoroutine(MoveCardWithRemainingDistance(ActionCard, startTile, m_remainingMove, player));
-            //更新卡牌位置
-            startTile = GetTileUnderCard(ActionCard);
 
-            //攻击判定
-            yield return StartCoroutine(CardAttack(ActionCard, startTile));
+            ActionCard.ActionFinish(); //卡行动结束
 
-            // 第二次移动判断 这里的可移动距离是剩余可移动距离
-            yield return StartCoroutine(MoveCardWithRemainingDistance(ActionCard, startTile, m_remainingMove, player));
+            //重置参数
+            m_remainingMove = 0;
+            IsAttacked = false;
+
+            StartCoroutine(MoveNextCard()); // 移动下一个卡片
         }
 
-        ActionCard.ActionFinish(); //卡行动结束
-
-        //重置参数
-        m_remainingMove = 0;
-        IsAttacked = false;
-
-        StartCoroutine(MoveNextCard()); // 移动下一个卡片
     }
 
     #endregion

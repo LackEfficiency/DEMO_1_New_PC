@@ -51,7 +51,9 @@ public class MonsterCard : Card
 
     //技能用属性
     private int m_IsGuardian; //是否触发守护状态 优先进行攻击 范围内不存在可攻击对象时 再进行移动
-    //大于0则存在守护状态
+                              //大于0则存在守护状态
+    private int m_CantAction; //是否可以行动 大于0则不可以行动
+
     
 
     #endregion
@@ -177,6 +179,7 @@ public class MonsterCard : Card
     public int AttackBoost { get => m_AttackBoost; set => m_AttackBoost = value; }
     public int MaxHpBoost { get => m_MaxHpBoost; set => m_MaxHpBoost = value; }
     public int IsGuardian { get => m_IsGuardian; set => m_IsGuardian = value; }
+    public int CantAction { get => m_CantAction; set => m_CantAction = value; }
 
 
 

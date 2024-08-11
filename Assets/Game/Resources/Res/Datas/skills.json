@@ -5,14 +5,14 @@
       "name": "Brave1",
       "duration": -1,
       "spellType": "Self",
-      "value": 1
+      "value": 1.0
     },
     {
       "type": "SkillBleed",
       "name": "Bleed1",
       "duration": -1,
       "spellType": "Enemy",
-      "value": 1
+      "value": 1.0
     },
     {
       "type": "SkillWeaken",
@@ -26,6 +26,13 @@
       "name": "Guardian",
       "duration": -1,
       "spellType": "Self"
+    },
+    {
+      "type": "SkillStun",
+      "name": "Stun1",
+      "duration": -1,
+      "spellType": "Enemy",
+      "value": 1.0
     }
   ]
 }

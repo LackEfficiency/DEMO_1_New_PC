@@ -232,3 +232,6 @@ TODO:
 10/08/2024
 1.实现Buff, Effect, Skill的工厂模式创建实例
 2.把Skill, Effect和Buff 配置文件化
+
+11/08/2024
+1.实现晕眩技能，晕眩buff

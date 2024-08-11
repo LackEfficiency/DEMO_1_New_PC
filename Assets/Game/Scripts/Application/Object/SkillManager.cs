@@ -31,11 +31,11 @@ public class SkillManager : Singleton<SkillManager>
     protected override void Awake()
     {
         base.Awake();
-        LoadBuffConfig();
+        LoadSkillConfig();
     }
 
     //加载技能配置
-    private void LoadBuffConfig()
+    private void LoadSkillConfig()
     {
         string json = File.ReadAllText(Consts.SkillDataDir);
         SkillConfig skillConfig = JsonUtility.FromJson<SkillConfig>(json);
@@ -173,6 +173,8 @@ public class SkillManager : Singleton<SkillManager>
                 return new SkillWeaken(data.name, data.duration, Enum.Parse<SpellType>(data.spellType), data.value);
             case "SkillGuardian":
                 return new SkillGuardian(data.name, data.duration, Enum.Parse<SpellType>(data.spellType));
+            case "SkillStun":
+                return new SkillStun(data.name, data.duration, Enum.Parse<SpellType>(data.spellType), (int)data.value);
             // 添加其他技能类型
             default:
                 Debug.LogWarning("Unknown Skill type: " + data.type);

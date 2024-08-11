@@ -116,6 +116,7 @@ public static class Consts
         "Weaken05",
         "Guardian",
         "GuardianFromSkill",
+        "Stun1",
     };
 
     //SkillNames
@@ -125,6 +126,7 @@ public static class Consts
         "Bleed1",
         "Weaken05",
         "Guardian",
+        "Stun1",
     };
 }
 

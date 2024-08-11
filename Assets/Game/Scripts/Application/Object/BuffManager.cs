@@ -232,6 +232,8 @@ public class BuffManager : Singleton<BuffManager>
                 return new BuffWeaken(data.name, data.duration, data.stackable, data.value);
             case "BuffGuardian":
                 return new BuffGuardian(data.name, data.duration, data.stackable);
+            case "BuffStun":
+                return new BuffStun(data.name, data.duration, data.stackable);
             // 添加更多类型
             default:
                 Debug.LogWarning("Unknown Buff type: " + data.type);
