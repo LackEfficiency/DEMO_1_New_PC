@@ -24,7 +24,7 @@ public class SubPool
         this.m_prefab = prefab;
     }
 
-    //取对象
+    //取对象 
     public GameObject Spawn()
     {
         GameObject go = null;
@@ -45,7 +45,29 @@ public class SubPool
             m_objects.Add(go);
         }
 
-        go.SetActive(true);
+        //如果不需要淡入 直接显示 否则不显示等待淡入
+        // 尝试获取 FadeController 组件
+        try
+        {
+            FadeController fadeController = go.GetComponent<FadeController>();
+            if (fadeController != null)
+            {
+                // 如果 FadeController 存在，执行渐进效果
+                fadeController.StartCoroutine(fadeController.FadeIn(go));
+            }
+            else
+            {
+                // 如果 FadeController 不存在，直接激活对象
+                go.SetActive(true);
+            }
+        }
+        catch (NullReferenceException e)
+        {
+            Debug.LogError($"Failed to get FadeController component: {e.Message}");
+            // 处理异常，直接激活对象
+            go.SetActive(true);
+        }
+
         go.SendMessage("OnSpawn", SendMessageOptions.DontRequireReceiver);
         return go;
     }
@@ -56,7 +78,29 @@ public class SubPool
         if (Contains(go))
         {
             go.SendMessage("OnUnspawn", SendMessageOptions.DontRequireReceiver);
-            go.SetActive(false);
+
+            // 如果不需要淡出 直接隐藏 否则不显示等待淡出
+            // 尝试获取 FadeController 组件
+            try
+            {
+                FadeController fadeController = go.GetComponent<FadeController>();
+                if (fadeController != null)
+                {
+                    // 如果 FadeController 存在，执行渐进效果
+                    fadeController.StartCoroutine(fadeController.FadeOut(go));
+                }
+                else
+                {
+                    // 如果 FadeController 不存在，直接隐藏对象
+                    go.SetActive(false);
+                }
+            }
+            catch (NullReferenceException e)
+            {
+                Debug.LogError($"Failed to get FadeController component: {e.Message}");
+                // 处理异常，直接隐藏
+                go.SetActive(false);
+            }
         }
     }
 
