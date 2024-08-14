@@ -117,6 +117,7 @@ public static class Consts
         "Guardian",
         "GuardianFromSkill",
         "Stun1",
+        "MoveBoost14",
     };
 
     //SkillNames
@@ -127,6 +128,7 @@ public static class Consts
         "Weaken05",
         "Guardian",
         "Stun1",
+        "WindWalk4",
     };
 }
 

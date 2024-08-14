@@ -235,6 +235,8 @@ public class BuffManager : Singleton<BuffManager>
             case "BuffStun":
                 return new BuffStun(data.name, data.duration, data.stackable);
             // 添加更多类型
+            case "BuffMoveBoost":
+                return new BuffMoveBoost(data.name, data.duration, data.stackable, (int)data.value); 
             default:
                 Debug.LogWarning("Unknown Buff type: " + data.type);
                 return null;

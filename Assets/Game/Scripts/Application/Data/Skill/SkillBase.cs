@@ -11,7 +11,7 @@ public abstract class SkillBase
 
     #region 字段
     private string m_SkillName;
-    private int m_CoolDown; //-1代表无CD
+    private int m_CoolDown; //-1代表无CD 100代表一次性
     private SpellType m_spellType; //技能对象
 
     #endregion

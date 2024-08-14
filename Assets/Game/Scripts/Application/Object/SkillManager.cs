@@ -166,15 +166,17 @@ public class SkillManager : Singleton<SkillManager>
         switch (data.type)
         {
             case "SkillBrave":
-                return new SkillBrave(data.name, data.duration, Enum.Parse<SpellType>(data.spellType), (int)data.value);
+                return new SkillBrave(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), (int)data.value);
             case "SkillBleed":
-                return new SkillBleed(data.name, data.duration, Enum.Parse<SpellType>(data.spellType), (int)data.value);
+                return new SkillBleed(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), (int)data.value);
             case "SkillWeaken":
-                return new SkillWeaken(data.name, data.duration, Enum.Parse<SpellType>(data.spellType), data.value);
+                return new SkillWeaken(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), data.value);
             case "SkillGuardian":
-                return new SkillGuardian(data.name, data.duration, Enum.Parse<SpellType>(data.spellType));
+                return new SkillGuardian(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType));
             case "SkillStun":
-                return new SkillStun(data.name, data.duration, Enum.Parse<SpellType>(data.spellType), (int)data.value);
+                return new SkillStun(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), (int)data.value);
+            case "SkillWindWalk":
+                return new SkillWindWalk(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), (int)data.value);
             // 添加其他技能类型
             default:
                 Debug.LogWarning("Unknown Skill type: " + data.type);

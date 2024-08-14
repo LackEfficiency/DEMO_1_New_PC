@@ -5,7 +5,7 @@ public class SkillData
 {
     public string type;
     public string name;
-    public int duration;
+    public int coolDown;
     public string spellType;
     public float value; 
 }
