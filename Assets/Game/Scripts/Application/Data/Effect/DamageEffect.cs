@@ -17,6 +17,6 @@ public class DamageEffect : Effect
     {
         if (card == null)
             return;
-        card.Damage(DamageValue);
+        card.Damage(null, DamageValue);
     }
 }

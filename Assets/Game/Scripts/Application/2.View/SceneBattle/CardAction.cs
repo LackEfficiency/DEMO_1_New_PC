@@ -33,6 +33,9 @@ class CardAction : View
     //判断是否完成移动和攻击 用于部分技能的实现
     int m_remainingMove = 0;
     bool IsAttacked = false;
+    
+    //协程锁 同时只能有一个卡牌进行攻击
+    private bool isCardAttacking = false;
     #endregion
 
     #region 属性
@@ -93,7 +96,7 @@ class CardAction : View
     }
 
 
-    //卡片攻击逻辑控制
+    //卡片攻击逻辑控制 
     IEnumerator CardAttack(MonsterCard card, TileBattle startTile) //传入需要进行攻击的卡牌以及卡牌所处的格子
     {
         //找到攻击目标
@@ -133,14 +136,52 @@ class CardAction : View
 
         //攻击完成
         IsAttacked = true;
-    } 
+    }
+
+    //卡片攻击逻辑控制 传入当前卡和目标卡 外部访问接口
+    //需要和另外一个攻击协程同步 同时只能有一个卡牌进行攻击
+    public IEnumerator CardAttack(MonsterCard attacker, MonsterCard targetCard)
+    {
+        // 等待锁释放
+        yield return new WaitUntil(() => !isCardAttacking);
+
+        // 获取锁
+        isCardAttacking = true;
+
+        //动画控制
+        attacker.IsCardAttacking = true;
+
+        //更新目标
+        attacker.Target = targetCard;
+        //获取攻击目标的位置和当前卡牌的位置
+
+        attacker.NextDes = m_Map.GetPosition(GetTileUnderCard(targetCard));
+        attacker.CurPos = m_Map.GetPosition(GetTileUnderCard(attacker));
+        yield return new WaitWhile(() => GetIsCardAttack(attacker)); //等待攻击动画完成
+        Debug.Log("Card attacked successfully.");
+
+        //攻击完成
+        IsAttacked = true;
+
+        // 释放锁
+        isCardAttacking = false;
+    }
                                   
 
     //从队列中移动卡牌
     private IEnumerator MoveNextCard()
     {
+
+        // 等待锁释放
+        yield return new WaitUntil(() => !isCardAttacking);
+
+        // 获取锁
+        isCardAttacking = true;
+
         if (cardQueue.Count == 0)
         {
+            // 释放锁
+            isCardAttacking = false;
             yield break; // 如果队列为空，则退出协程
         }
 
@@ -150,11 +191,15 @@ class CardAction : View
         if (ActionCard.CantAction > 0) //如果卡片不可行动 则直接跳过当前卡牌
         {
             ActionCard.ActionFinish(); //但仍需触发卡片行动结束事件
+            // 释放锁
+            isCardAttacking = false;
             StartCoroutine(MoveNextCard());
         }        
         else if (startTile.Card == null) //各种意外情况导致卡牌死亡
         {
-            Debug.LogError("卡片不存在");    
+            Debug.LogError("卡片不存在");
+            // 释放锁
+            isCardAttacking = false;
             StartCoroutine(MoveNextCard()); // 移动下一个卡片
         }
         else
@@ -203,6 +248,9 @@ class CardAction : View
             //重置参数
             m_remainingMove = 0;
             IsAttacked = false;
+
+            // 释放锁
+            isCardAttacking = false;
 
             StartCoroutine(MoveNextCard()); // 移动下一个卡片
         }

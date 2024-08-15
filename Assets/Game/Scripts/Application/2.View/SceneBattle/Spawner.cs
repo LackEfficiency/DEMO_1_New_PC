@@ -123,6 +123,7 @@ public class Spawner : View
         m_card.OnAttack += Game.Instance.BuffManager.OnAttack;
         m_card.OnActionFinish += Game.Instance.BuffManager.OnActionFinish;
         m_card.OnActionStart += Game.Instance.BuffManager.OnActionStart;
+        m_card.OnTakeDamage += Game.Instance.BuffManager.OnTakeDamage;
 
 
 

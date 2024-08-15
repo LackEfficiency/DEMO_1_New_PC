@@ -6,7 +6,8 @@ monster,3,caster,2,6,2,
 monster,4,Knight,2,10,2,Guardian
 monster,5,GiantHammerWarrior,3,12,2,Stun1
 monster,6,Assassin,1,6,2,WindWalk4
+monster,7,Revenger,3,6,2,CounterBack
 #,编号,卡名,效果,类型,回合数,
-spell,7,fireBall,Damage4 1,Enemy,3
-spell,8,cure,Heal4 1,Self,3
-spell,9,brave1,Brave1 10,Self,2
+spell,8,fireBall,Damage4 1,Enemy,3
+spell,9,cure,Heal4 1,Self,3
+spell,10,brave1,Brave1 10,Self,2

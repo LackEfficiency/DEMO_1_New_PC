@@ -58,6 +58,12 @@ public class BuffInstance
         m_BuffBase.OnAttack(monsterCard, target, buffInstance);
     }
 
+    //收到伤害时调用
+    public void OnTakeDamage(MonsterCard attacker, MonsterCard self, BuffInstance buffInstance)
+    {
+        m_BuffBase.OnTakeDamage(attacker,self, buffInstance);
+    }   
+
     //修改剩余回合数，由其他buff或者effect触发
     public void ModifyRemainingRound(int amount)
     {

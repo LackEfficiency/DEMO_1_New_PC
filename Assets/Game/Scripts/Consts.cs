@@ -118,6 +118,7 @@ public static class Consts
         "GuardianFromSkill",
         "Stun1",
         "MoveBoost14",
+        "CounterBackFromSkill",
     };
 
     //SkillNames
@@ -129,6 +130,7 @@ public static class Consts
         "Guardian",
         "Stun1",
         "WindWalk4",
+        "CounterBack",
     };
 }
 

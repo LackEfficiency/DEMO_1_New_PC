@@ -22,7 +22,7 @@ public class MonsterCard : Card
     public event Action<MonsterCard, MonsterCard> OnAttack;
     public event Action<MonsterCard> OnDamage;
     public event Action<MonsterCard> OnDie;
-    public event Action<MonsterCard> OnTakeDamage;
+    public event Action<MonsterCard, MonsterCard> OnTakeDamage;
     public event Action<MonsterCard> OnTakeHeal;
     public event Action<MonsterCard> OnActionFinish;
     public event Action<MonsterCard> OnActionStart;
@@ -38,6 +38,8 @@ public class MonsterCard : Card
     bool m_IsCardAttacking = false; //判断是否需要攻击  
 
     private MonsterCardInfo monsterCardInfo; //卡牌信息
+
+    private MonsterCard attacker; //攻击者
 
     //基本属性
     private int m_BaseAttack; //基础攻击力
@@ -77,7 +79,7 @@ public class MonsterCard : Card
             {
                 if (OnTakeDamage != null)
                 {
-                    OnTakeDamage(this);
+                    OnTakeDamage(attacker, this);
                 }
             }
 
@@ -256,7 +258,7 @@ public class MonsterCard : Card
                 IsCardAttacking = false;
                 IsCardReturn = false;
                 //被攻击的卡牌减血
-                target.Damage(TotalAttack);
+                target.Damage(this, TotalAttack);
 
                 //攻击事件
                 if (OnAttack != null)
@@ -282,15 +284,24 @@ public class MonsterCard : Card
             //平滑移动(米/帧 = 米/秒 * Time.deltaTime)
             transform.Translate(direction * MOVE_SPEED * Time.deltaTime);
         }
-
-
     }
 
+    //重载 传入攻击者和目标 触发攻击动作
+    public void Attack(MonsterCard attacker, MonsterCard target)
+    {
+        CardAction cardAction = GameObject.Find("Map").GetComponent<CardAction>();
+        StartCoroutine(cardAction.CardAttack(attacker, target));
+    }
+
+
     //受伤
-    public void Damage(int hit)
+    public void Damage(MonsterCard attacker = null, int hit = 0)
     {
         if (IsDead)
             return;
+
+        //更新攻击者
+        this.attacker = attacker;
 
         Hp -= hit;
 

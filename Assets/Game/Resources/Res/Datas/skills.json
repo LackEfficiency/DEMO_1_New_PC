@@ -40,6 +40,12 @@
       "coolDown": 100,
       "spellType": "Self",
       "value": 4.0
+    },
+    {
+      "type": "SkillCounterBack",
+      "name": "CounterBack",
+      "coolDown": -1,
+      "spellType": "Self"
     }
   ]
 }

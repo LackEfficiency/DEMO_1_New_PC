@@ -2,8 +2,8 @@
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 
-//具体Buff类，每次回合结束时减血
-public class BuffBleed : BuffBase
+//反击buff 收到伤害时反击
+public class BuffCounterBack : BuffBase
 {
     #region 常量
     #endregion
@@ -12,23 +12,20 @@ public class BuffBleed : BuffBase
     #endregion
 
     #region 字段
-    int m_BleedValue; //流血伤害
 
     #endregion
 
     #region 属性
-    public int BleedValue { get => m_BleedValue; set => m_BleedValue = value; }
     #endregion
 
     #region 方法
-    public BuffBleed(string buffName, int buffRound, bool buffStackable, int bleedValue) : base(buffName, buffRound, buffStackable)
+    public BuffCounterBack(string buffName, int buffRound, bool buffStackable) : base(buffName, buffRound, buffStackable)
     {
-        m_BleedValue = bleedValue;
-    }
 
+    }
     public override void ApplyBuff(MonsterCard monsterCard, BuffInstance buffInstance)
     {
-       
+
     }
 
     public override void RemoveBuff(MonsterCard monsterCard, BuffInstance buffInstance)
@@ -38,7 +35,7 @@ public class BuffBleed : BuffBase
 
     public override void UpdateBuff(MonsterCard monsterCard, BuffInstance buffInstance)
     {
-        
+
     }
 
     #endregion
@@ -47,13 +44,14 @@ public class BuffBleed : BuffBase
     #endregion
 
     #region 事件回调
-
-    public override void OnActionFinish(MonsterCard monsterCard,  BuffInstance instance)
+    public override void OnTakeDamage(MonsterCard attacker, MonsterCard self, BuffInstance instance)
     {
-
-         //回合结束扣血
-         monsterCard.Damage(null, BleedValue);
-
+        //只有明确来源的伤害才会触发反击
+        if (attacker != null)
+        {
+            self.Attack(self, attacker);
+        }
+        
     }
 
 

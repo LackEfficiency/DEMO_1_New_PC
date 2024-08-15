@@ -177,6 +177,8 @@ public class SkillManager : Singleton<SkillManager>
                 return new SkillStun(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), (int)data.value);
             case "SkillWindWalk":
                 return new SkillWindWalk(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), (int)data.value);
+            case "SkillCounterBack":
+                return new SkillCounterBack(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType));
             // 添加其他技能类型
             default:
                 Debug.LogWarning("Unknown Skill type: " + data.type);

@@ -215,6 +215,17 @@ public class BuffManager : Singleton<BuffManager>
         }
     }
 
+    public void OnTakeDamage(MonsterCard attacker, MonsterCard self)
+    {
+        if (BuffDictionary.ContainsKey(self))
+        {
+            foreach (var buffInstance in BuffDictionary[self])
+            {
+                buffInstance.OnTakeDamage(attacker, self, buffInstance);
+            }
+        }
+    }
+
 
     #endregion
 
@@ -234,9 +245,10 @@ public class BuffManager : Singleton<BuffManager>
                 return new BuffGuardian(data.name, data.duration, data.stackable);
             case "BuffStun":
                 return new BuffStun(data.name, data.duration, data.stackable);
-            // 添加更多类型
             case "BuffMoveBoost":
-                return new BuffMoveBoost(data.name, data.duration, data.stackable, (int)data.value); 
+                return new BuffMoveBoost(data.name, data.duration, data.stackable, (int)data.value);
+            case "BuffCounterBack":
+                return new BuffCounterBack(data.name, data.duration, data.stackable);
             default:
                 Debug.LogWarning("Unknown Buff type: " + data.type);
                 return null;
