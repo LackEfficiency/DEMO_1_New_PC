@@ -46,6 +46,13 @@
       "name": "CounterBack",
       "coolDown": -1,
       "spellType": "Self"
+    },
+    {
+      "type": "SkillHealAnAlly",
+      "name": "HealAnAlly2",
+      "coolDown": -1,
+      "spellType": "Self",
+      "value": 2.0
     }
   ]
 }

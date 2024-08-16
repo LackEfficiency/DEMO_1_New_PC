@@ -48,10 +48,11 @@ public class BuffBleed : BuffBase
 
     #region 事件回调
 
-    public override void OnActionFinish(MonsterCard monsterCard,  BuffInstance instance)
+    public override void OnActionFinish(CardActionArgs cardActionArgs, BuffInstance instance)
     {
 
          //回合结束扣血
+         MonsterCard monsterCard = cardActionArgs.self;
          monsterCard.Damage(null, BleedValue);
 
     }

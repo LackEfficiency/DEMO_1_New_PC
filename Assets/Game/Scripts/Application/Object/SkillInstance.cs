@@ -41,11 +41,11 @@ public class SkillInstance
         SkillBase.Activate(monsterCard);
     }
 
-    public void OnActionStart(MonsterCard monsterCard)
+    public void OnActionStart(CardActionArgs cardActionArgs)
     {
         if (RemainCoolDown <= 0)
         {
-            SkillBase.OnActionStart(monsterCard);
+            SkillBase.OnActionStart(cardActionArgs);
             RemainCoolDown = SkillBase.CoolDown;
         }
     }
@@ -59,11 +59,11 @@ public class SkillInstance
         }
     }
 
-    public void OnActionFinish(MonsterCard monsterCard)
+    public void OnActionFinish(CardActionArgs cardActionArgs)
     {
         if (RemainCoolDown <= 0)
         {
-            SkillBase.OnActionFinish(monsterCard);
+            SkillBase.OnActionFinish(cardActionArgs);
             RemainCoolDown = SkillBase.CoolDown;
         }
     }

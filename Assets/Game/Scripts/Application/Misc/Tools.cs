@@ -242,4 +242,33 @@ public class Tools
         }
     }
 
+    // 返回血量百分比最低的卡牌
+    public static MonsterCard GetLowestHp(List<MonsterCard> cardsList)
+    {
+        if (cardsList == null || cardsList.Count == 0)
+        {
+            return null; // 如果列表为空或为null，返回null
+        }
+
+        MonsterCard card = cardsList[0];
+        // 初始化为第一个卡牌的血量百分比
+        float lowestHp = card.Hp / card.MaxHp;
+
+        foreach (MonsterCard monsterCard in cardsList)
+        {
+            // 计算当前卡牌的血量百分比
+            float currentHpPercentage = monsterCard.Hp / monsterCard.MaxHp;
+
+            // 如果当前卡牌的血量百分比更低，则更新
+            if (currentHpPercentage < lowestHp)
+            {
+                lowestHp = currentHpPercentage;
+                card = monsterCard;
+            }
+        }
+
+        return card;
+    }
+
+
 }

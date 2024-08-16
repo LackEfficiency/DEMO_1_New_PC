@@ -131,6 +131,7 @@ public static class Consts
         "Stun1",
         "WindWalk4",
         "CounterBack",
+        "HealAnAlly2",
     };
 }
 

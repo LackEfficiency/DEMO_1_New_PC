@@ -165,8 +165,9 @@ public class BuffManager : Singleton<BuffManager>
     //        }
     //    }
     //}
-    public void OnActionFinish(MonsterCard monsterCard)
+    public void OnActionFinish(CardActionArgs cardActionArgs)
     {
+        MonsterCard monsterCard = cardActionArgs.self;
         lock (buffDictionaryLock)
         {
             // 如果 monsterCard 有 buff，遍历所有 buff，调用 OnActionFinish
@@ -176,7 +177,7 @@ public class BuffManager : Singleton<BuffManager>
                 var buffs = BuffDictionary[monsterCard];
                 foreach (var buffInstance in buffs)
                 {
-                    buffInstance.OnActionFinish(monsterCard, buffInstance);
+                    buffInstance.OnActionFinish(cardActionArgs, buffInstance);
                     if (buffInstance.RemainingRound == 0)
                     {
                         buffsToRemove.Add(buffInstance);
@@ -193,13 +194,14 @@ public class BuffManager : Singleton<BuffManager>
     }
 
 
-    public void OnActionStart(MonsterCard monsterCard)
+    public void OnActionStart(CardActionArgs cardActionArgs)
     {
+        MonsterCard monsterCard = cardActionArgs.self;
         if (BuffDictionary.ContainsKey(monsterCard))
         {
             foreach (var buffInstance in BuffDictionary[monsterCard])
             {
-                buffInstance.OnActionStart(monsterCard, buffInstance);
+                buffInstance.OnActionStart(cardActionArgs, buffInstance);
             }
         }
     }

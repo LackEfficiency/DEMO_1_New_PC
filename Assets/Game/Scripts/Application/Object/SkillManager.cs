@@ -124,13 +124,14 @@ public class SkillManager : Singleton<SkillManager>
     #endregion
 
     #region 事件回调
-    public void OnActionStart(MonsterCard monsterCard)
+    public void OnActionStart(CardActionArgs cardActionArgs)
     {
+        MonsterCard monsterCard = cardActionArgs.self;
         if (SkillDictionary.ContainsKey(monsterCard))
         {
             foreach (var skillInstance in SkillDictionary[monsterCard])
             {
-                skillInstance.OnActionStart(monsterCard);
+                skillInstance.OnActionStart(cardActionArgs);
             }
         }
     }
@@ -146,13 +147,14 @@ public class SkillManager : Singleton<SkillManager>
         }
     }
 
-    public void OnActionFinish(MonsterCard monsterCard)
+    public void OnActionFinish(CardActionArgs cardActionArgs)
     {
+        MonsterCard monsterCard = cardActionArgs.self;
         if (SkillDictionary.ContainsKey(monsterCard))
         {
             foreach (var skillInstance in SkillDictionary[monsterCard])
             {
-                skillInstance.OnActionFinish(monsterCard);
+                skillInstance.OnActionFinish(cardActionArgs);
             }
         }
     }
@@ -179,6 +181,8 @@ public class SkillManager : Singleton<SkillManager>
                 return new SkillWindWalk(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), (int)data.value);
             case "SkillCounterBack":
                 return new SkillCounterBack(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType));
+            case "SkillHealAnAlly":
+                return new SkillHealAnAlly(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), (int)data.value);
             // 添加其他技能类型
             default:
                 Debug.LogWarning("Unknown Skill type: " + data.type);

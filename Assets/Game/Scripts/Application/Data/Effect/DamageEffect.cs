@@ -17,6 +17,16 @@ public class DamageEffect : Effect
     {
         if (card == null)
             return;
-        card.Damage(null, DamageValue);
+        if (DamageValue > 0)
+        {
+            //正伤害使用Damage方法
+            card.Damage(null, DamageValue);
+        } 
+        else
+        {
+            //负伤害使用Heal方法
+            card.Heal(null, -DamageValue);
+        }
+       
     }
 }

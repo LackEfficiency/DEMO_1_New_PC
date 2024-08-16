@@ -32,7 +32,7 @@ public class BuffInstance
     }
 
     //行动完成调用 持续时间-1
-    public void OnActionFinish(MonsterCard monsterCard, BuffInstance buffIntance)
+    public void OnActionFinish(CardActionArgs cardActionArgs, BuffInstance buffIntance)
     {
         //若不是永久存在的buff，则减少剩余回合数
         if (m_RemainingRound != -1)
@@ -41,15 +41,15 @@ public class BuffInstance
             if (m_RemainingRound == 0)
             {
                 //Buff被移除时如果要触发某个事件，则在这里调用
-                m_BuffBase.RemoveBuff(monsterCard, this);
+                m_BuffBase.RemoveBuff(cardActionArgs.self, this);
             }
         }
-        m_BuffBase.OnActionFinish(monsterCard, buffIntance);
+        m_BuffBase.OnActionFinish(cardActionArgs, buffIntance);
     }
 
-    public void OnActionStart(MonsterCard monsterCard, BuffInstance buffIntance)
+    public void OnActionStart(CardActionArgs cardActionArgs, BuffInstance buffIntance)
     {
-        m_BuffBase.OnActionStart(monsterCard, buffIntance);
+        m_BuffBase.OnActionStart(cardActionArgs, buffIntance);
     }
 
     //行动完成时调用

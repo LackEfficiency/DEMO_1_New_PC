@@ -24,8 +24,8 @@ public class MonsterCard : Card
     public event Action<MonsterCard> OnDie;
     public event Action<MonsterCard, MonsterCard> OnTakeDamage;
     public event Action<MonsterCard> OnTakeHeal;
-    public event Action<MonsterCard> OnActionFinish;
-    public event Action<MonsterCard> OnActionStart;
+    public event Action<CardActionArgs> OnActionFinish;
+    public event Action<CardActionArgs> OnActionStart;
     #endregion
 
     #region 字段
@@ -40,6 +40,7 @@ public class MonsterCard : Card
     private MonsterCardInfo monsterCardInfo; //卡牌信息
 
     private MonsterCard attacker; //攻击者
+    private MonsterCard healer; //治疗者
 
     //基本属性
     private int m_BaseAttack; //基础攻击力
@@ -308,6 +309,20 @@ public class MonsterCard : Card
         //ToDO:触发动画触发器
     }
 
+    //收到治疗
+    public void Heal(MonsterCard healer = null, int heal = 0)
+    {
+        if (IsDead)
+            return;
+
+        //更新治疗者
+        this.healer = healer;
+
+        Hp += heal;
+
+        //ToDO:触发动画触发器
+    }
+
     //外部调用的死亡
     public void Kill()
     {
@@ -338,11 +353,19 @@ public class MonsterCard : Card
         this.Hp += value;
     }
 
-    public void ActionFinish()
+    public void ActionFinish(CardActionArgs cardActionArgs)
     {
         if (OnActionFinish != null)
         {
-            OnActionFinish(this);
+            OnActionFinish(cardActionArgs);
+        }
+    }
+
+    public void ActionStart(CardActionArgs cardActionArgs)
+    {
+        if (OnActionStart != null)
+        {
+            OnActionStart(cardActionArgs);
         }
     }
 

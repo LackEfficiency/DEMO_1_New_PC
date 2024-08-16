@@ -40,10 +40,10 @@ public abstract class SkillBase
     public virtual void OnAttack(MonsterCard monsterCard, MonsterCard target) { }
 
     //行动开始时触发的技能，例如治愈一名队友或者造成一次伤害
-    public virtual void OnActionStart(MonsterCard monsterCard) { }
+    public virtual void OnActionStart(CardActionArgs cardActionArgs) { }
 
     //行动结束时触发的技能，例如回复自己生命值或者造成一次伤害
-    public virtual void OnActionFinish(MonsterCard monsterCard) { }
+    public virtual void OnActionFinish(CardActionArgs cardActionArgs) { }
 
     #endregion
 

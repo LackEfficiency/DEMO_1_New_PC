@@ -28,6 +28,11 @@ class CardAction : View
 
     private Queue<MonsterCard> cardQueue = new Queue<MonsterCard>(); // 存储需要移动的卡片队列
     private Queue<TileBattle> tiles = new Queue<TileBattle>(); //存储对应的卡片格子
+
+    private List<MonsterCard> SelfCardsOnField = new List<MonsterCard>(); //存储己方场上卡牌
+    private List<MonsterCard> EnemyCardsOnField = new List<MonsterCard>(); //存储敌方场上卡牌
+
+    private CardActionArgs cardActionArgs = null; //卡牌行动参数
     Player player;
 
     //判断是否完成移动和攻击 用于部分技能的实现
@@ -188,9 +193,15 @@ class CardAction : View
         TileBattle startTile = tiles.Dequeue(); // 从队列中取出卡牌所在的格子
         MonsterCard ActionCard = cardQueue.Dequeue(); // 从队列中取出卡片
 
+        //获取事件所需参数
+        SelfCardsOnField = GetCardsOnField(Player.Self);
+        EnemyCardsOnField = GetCardsOnField(Player.Enemy);
+        cardActionArgs = new CardActionArgs(ActionCard, null, SelfCardsOnField, EnemyCardsOnField);
+        ActionCard.ActionStart(cardActionArgs);//触发卡牌行动开始事件
+
         if (ActionCard.CantAction > 0) //如果卡片不可行动 则直接跳过当前卡牌
         {
-            ActionCard.ActionFinish(); //但仍需触发卡片行动结束事件
+            ActionCard.ActionFinish(cardActionArgs); //但仍需触发卡片行动结束事件
             // 释放锁
             isCardAttacking = false;
             StartCoroutine(MoveNextCard());
@@ -243,7 +254,13 @@ class CardAction : View
                 yield return StartCoroutine(MoveCardWithRemainingDistance(ActionCard, startTile, m_remainingMove, player));
             }
 
-            ActionCard.ActionFinish(); //卡行动结束
+            //更新参数
+            //获取事件所需参数
+            SelfCardsOnField = GetCardsOnField(Player.Self);
+            EnemyCardsOnField = GetCardsOnField(Player.Enemy);
+            cardActionArgs = new CardActionArgs(ActionCard, null, SelfCardsOnField, EnemyCardsOnField);
+
+            ActionCard.ActionFinish(cardActionArgs); //卡行动结束
 
             //重置参数
             m_remainingMove = 0;
@@ -536,6 +553,25 @@ class CardAction : View
         }
         return null;
     }
+
+    //获取场上卡牌集合
+    public List<MonsterCard> GetCardsOnField(Player player)
+    {
+        List<MonsterCard> CardList = new List<MonsterCard>();
+        foreach (TileBattle tile in m_Map.Grid)
+        {
+            //遍历格子列表，移动符合条件的卡片
+            MonsterCard card = tile.Card?.GetComponent<Card>() as MonsterCard; // 获取卡片组件
+            if (card != null && card.Player == player)
+            {
+                CardList.Add(card); // 将卡片加入队列
+            }
+            
+        }
+        return CardList;
+    }
+
+    
 
 
     #endregion

@@ -49,9 +49,9 @@ public abstract class BuffBase
 
     public virtual void OnAttack(MonsterCard monsterCard, MonsterCard target, BuffInstance instance) { }
 
-    public virtual void OnActionFinish(MonsterCard monsterCard, BuffInstance instance) { }
+    public virtual void OnActionFinish(CardActionArgs cardActionArgs, BuffInstance instance) { }
 
-    public virtual void OnActionStart(MonsterCard monsterCard, BuffInstance instance) { }
+    public virtual void OnActionStart(CardActionArgs cardActionArgs, BuffInstance instance) { }
 
     public virtual void OnTakeDamage(MonsterCard Attacker, MonsterCard self, BuffInstance instance) { }
 
