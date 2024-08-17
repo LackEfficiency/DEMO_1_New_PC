@@ -49,7 +49,7 @@ public class BuffCounterBack : BuffBase
         //只有明确来源的伤害才会触发反击
         if (attacker != null)
         {
-            self.Attack(self, attacker);
+            self.AttackBySkill(self, attacker);
         }
         
     }

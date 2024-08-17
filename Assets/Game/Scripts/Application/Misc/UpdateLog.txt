@@ -241,7 +241,11 @@ TODO:
 
 16/08/2024
 1.实现了反击技能和反击Buff
-TODO: 反击时偶尔会触发NullReferenceException 但似乎不影响游戏进行 需要进一步调试
+TODO: 反击时偶尔会触发NullReferenceException 但似乎不影响游戏进行 需要进一步调试 
+该问题是由于反击技能的目标在反击时已经死亡导致的 暂时不产生影响 先不处理
 
 16/08/2024
 1.实现了治疗技能 重构CardAction事件 现在传递参数为CardActionArgs
+
+17/08/2024
+1.实现了攻击动画和受伤动画

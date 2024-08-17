@@ -37,6 +37,7 @@ class CardAction : View
 
     //判断是否完成移动和攻击 用于部分技能的实现
     int m_remainingMove = 0;
+    //判断先攻击后移动的情况
     bool IsAttacked = false;
     
     //协程锁 同时只能有一个卡牌进行攻击
@@ -114,29 +115,34 @@ class CardAction : View
             yield break;
         }
 
+        //当前攻击目标
+        MonsterCard target;
         //攻击玩家
         if (attackTargets[0].X == 0)
         {
-            card.Target = rModel.SelfSummoner; 
+            target = rModel.SelfSummoner; 
         }
         //攻击敌方玩家
         else if (attackTargets[0].X == MapBattle.ColumnCount - 1)
         {
-            card.Target = rModel.EnemySummoner;
+            target = rModel.EnemySummoner;
         }
         //攻击卡牌
         else
         {
-            card.Target = attackTargets[0].Card.GetComponent<MonsterCard>();
+            target = attackTargets[0].Card.GetComponent<MonsterCard>();
         }
 
-        //动画控制
-        card.IsCardAttacking = true;
+        ////动画控制 废案 用移动替代动画
+        //card.IsCardAttacking = true;
 
-        //获取攻击目标的位置和当前卡牌的位置
-        card.NextDes = m_Map.GetPosition(attackTargets[0]);
-        card.CurPos = m_Map.GetPosition(startTile);
-        yield return new WaitWhile(() => GetIsCardAttack(card)); //等待攻击动画完成
+        ////获取攻击目标的位置和当前卡牌的位置
+        //card.NextDes = m_Map.GetPosition(attackTargets[0]);
+        //card.CurPos = m_Map.GetPosition(startTile);
+        //yield return new WaitWhile(() => GetIsCardAttack(card)); //等待攻击动画完成
+
+        //现案 直接使用攻击动画
+        yield return StartCoroutine(card.Attack(card, target));
         Debug.Log("Card attacked successfully.");
 
         //攻击完成
@@ -153,17 +159,20 @@ class CardAction : View
         // 获取锁
         isCardAttacking = true;
 
-        //动画控制
-        attacker.IsCardAttacking = true;
+        ////动画控制
+        //attacker.IsCardAttacking = true;
 
-        //更新目标
-        attacker.Target = targetCard;
-        //获取攻击目标的位置和当前卡牌的位置
+        ////更新目标
+        //attacker.Target = targetCard;
+        ////获取攻击目标的位置和当前卡牌的位置
 
-        attacker.NextDes = m_Map.GetPosition(GetTileUnderCard(targetCard));
-        attacker.CurPos = m_Map.GetPosition(GetTileUnderCard(attacker));
-        yield return new WaitWhile(() => GetIsCardAttack(attacker)); //等待攻击动画完成
-        Debug.Log("Card attacked successfully.");
+        //attacker.NextDes = m_Map.GetPosition(GetTileUnderCard(targetCard));
+        //attacker.CurPos = m_Map.GetPosition(GetTileUnderCard(attacker));
+        //yield return new WaitWhile(() => GetIsCardAttack(attacker)); //等待攻击动画完成
+        //Debug.Log("Card attacked successfully.");
+
+        // 现案 直接调用方法完成攻击
+        yield return StartCoroutine(attacker.Attack(attacker, targetCard));
 
         //攻击完成
         IsAttacked = true;

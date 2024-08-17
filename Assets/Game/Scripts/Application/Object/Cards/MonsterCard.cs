@@ -33,6 +33,8 @@ public class MonsterCard : Card
     private Vector3 nextDes; //保存下个移动位置
     private MonsterCard target; //保存攻击目标 
 
+    Animator m_Animator = null; //动画控制器
+
     bool m_IsCardReturn = false; //判断是否正在返回
     bool m_IsCardMoving = false; //判断是否需要移动
     bool m_IsCardAttacking = false; //判断是否需要攻击  
@@ -237,58 +239,82 @@ public class MonsterCard : Card
 
     //攻击逻辑，攻击动画
     //TODO: 攻击动画
-    public void Attack() //传入攻击目标的位置和当前的位置
+    //public void Attack() //废案 移动到目标位置代替攻击动画
+    //{
+    //    //这里暂时先用移动动作代替攻击动作
+    //    //移动到目标位置后返回当前位置
+
+    //    //获取当前位置
+    //    Vector3 pos = transform.position;
+
+    //    //计算距离
+    //    float dis = Vector3.Distance(pos, NextDes);
+
+    //    if (dis < CLOSED_DISTANCE)
+    //    {
+    //        MoveTo(NextDes);
+    //        NextDes = CurPos;
+    //        //第一次抵达后把目标位置设为初始位置，同时把正在返回设置为true
+    //        //第二次抵达后把正在返回设置为false，同时正在攻击设置为false
+    //        if (IsCardReturn == true)
+    //        {
+    //            IsCardAttacking = false;
+    //            IsCardReturn = false;
+    //            //被攻击的卡牌减血
+    //            target.Damage(this, TotalAttack);
+
+    //            //攻击事件
+    //            if (OnAttack != null)
+    //            {
+    //                OnAttack(this, target);
+    //            }
+
+    //            //攻击造成伤害事件
+    //            if (OnDamage != null)
+    //            {
+    //                OnDamage(this);
+    //            }
+
+    //        }
+    //        else
+    //            IsCardReturn = true;
+    //    }
+    //    else
+    //    {
+    //        //计算移动方向
+    //        Vector3 direction = (NextDes - pos).normalized;
+
+    //        //平滑移动(米/帧 = 米/秒 * Time.deltaTime)
+    //        transform.Translate(direction * MOVE_SPEED * Time.deltaTime);
+    //    }
+    //}
+    
+    //攻击逻辑，攻击动画
+    public IEnumerator Attack(MonsterCard attacker, MonsterCard target)
     {
-        //这里暂时先用移动动作代替攻击动作
-        //移动到目标位置后返回当前位置
+        // 触发攻击动画
+        m_Animator.SetTrigger("IsAttack");
 
-        //获取当前位置
-        Vector3 pos = transform.position;
+        yield return new WaitForSeconds(1.0f);
 
-        //计算距离
-        float dis = Vector3.Distance(pos, NextDes);
+        //被攻击的卡牌减血
+        target.Damage(this, TotalAttack);
 
-        if (dis < CLOSED_DISTANCE)
+        //攻击事件
+        if (OnAttack != null)
         {
-            MoveTo(NextDes);
-            NextDes = CurPos;
-            //第一次抵达后把目标位置设为初始位置，同时把正在返回设置为true
-            //第二次抵达后把正在返回设置为false，同时正在攻击设置为false
-            if (IsCardReturn == true)
-            {
-                IsCardAttacking = false;
-                IsCardReturn = false;
-                //被攻击的卡牌减血
-                target.Damage(this, TotalAttack);
-
-                //攻击事件
-                if (OnAttack != null)
-                {
-                    OnAttack(this, target);
-                }
-
-                //攻击造成伤害事件
-                if (OnDamage != null)
-                {
-                    OnDamage(this);
-                }
-
-            }
-            else
-                IsCardReturn = true;
+            OnAttack(this, target);
         }
-        else
-        {
-            //计算移动方向
-            Vector3 direction = (NextDes - pos).normalized;
 
-            //平滑移动(米/帧 = 米/秒 * Time.deltaTime)
-            transform.Translate(direction * MOVE_SPEED * Time.deltaTime);
+        //攻击造成伤害事件
+        if (OnDamage != null)
+        {
+            OnDamage(this);
         }
     }
 
-    //重载 传入攻击者和目标 触发攻击动作
-    public void Attack(MonsterCard attacker, MonsterCard target)
+    //回合外的攻击需要使用该接口 因为需要线程同步 必须经过CardAction的CardAttack方法
+    public void AttackBySkill(MonsterCard attacker, MonsterCard target)
     {
         CardAction cardAction = GameObject.Find("Map").GetComponent<CardAction>();
         StartCoroutine(cardAction.CardAttack(attacker, target));
@@ -304,9 +330,18 @@ public class MonsterCard : Card
         //更新攻击者
         this.attacker = attacker;
 
-        Hp -= hit;
+        StartCoroutine(IsHit());
 
-        //ToDO:触发动画触发器
+        Hp -= hit;
+    }
+
+    //受伤动画
+    IEnumerator IsHit()
+    {
+        // 触发受伤动画
+        m_Animator.SetTrigger("IsHit");
+
+        yield return new WaitForSeconds(1.0f);
     }
 
     //收到治疗
@@ -387,10 +422,11 @@ public class MonsterCard : Card
             Move();
         }
 
-        if (IsCardAttacking)
-        {
-            Attack();
-        }
+        //废案 现在攻击单独用协程实现
+        //if (IsCardAttacking)
+        //{
+        //    Attack();
+        //}
     }
 
     #endregion
@@ -407,11 +443,16 @@ public class MonsterCard : Card
 
         //重置技能
         Game.Instance.SkillManager.RemoveAllSkills(this);
+
+        //获取动画控制器
+        m_Animator = GetComponent<Animator>();
     }
 
     public override void OnUnspawn()
     {
         base.OnUnspawn();
+
+        this.m_Animator = null;
 
         //移除事件
         while (StatusChanged != null)
@@ -429,8 +470,6 @@ public class MonsterCard : Card
         this.Hp = 0;
         this.MoveRange = 0;
         this.AttackRange = 0;
-
-
         this.AttackBoost = 0;
 
         while (OnMove != null)
