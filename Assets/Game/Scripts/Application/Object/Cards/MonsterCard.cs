@@ -20,7 +20,7 @@ public class MonsterCard : Card
     //各类行为 用于BUFF更新
     public event Action<MonsterCard> OnMove;
     public event Action<MonsterCard, MonsterCard> OnAttack;
-    public event Action<MonsterCard> OnDamage;
+    public event Action<MonsterCard, MonsterCard> OnDamage;
     public event Action<MonsterCard> OnDie;
     public event Action<MonsterCard, MonsterCard> OnTakeDamage;
     public event Action<MonsterCard> OnTakeHeal;
@@ -122,6 +122,20 @@ public class MonsterCard : Card
 
     }
 
+    public int AttackBoost 
+    { 
+        get => m_AttackBoost;
+        set
+        {
+            if (value == m_AttackBoost)
+                return;
+            m_AttackBoost = value;
+
+            if (StatusChanged != null)
+                StatusChanged(this);
+        }
+    }
+
     //卡牌是否死亡
     public bool IsDead
     {
@@ -181,7 +195,6 @@ public class MonsterCard : Card
     public int MaxHp { get => m_MaxHp; set => m_MaxHp = value; }
     public int MoveRange { get => m_MoveRange; set => m_MoveRange = value; }
     public int AttackRange { get => m_AttackRange; set => m_AttackRange = value; }
-    public int AttackBoost { get => m_AttackBoost; set => m_AttackBoost = value; }
     public int MaxHpBoost { get => m_MaxHpBoost; set => m_MaxHpBoost = value; }
     public int IsGuardian { get => m_IsGuardian; set => m_IsGuardian = value; }
     public int CantAction { get => m_CantAction; set => m_CantAction = value; }
@@ -297,19 +310,19 @@ public class MonsterCard : Card
 
         yield return new WaitForSeconds(1.0f);
 
-        //被攻击的卡牌减血
-        target.Damage(this, TotalAttack);
-
-        //攻击事件
+        //攻击前判定事件
         if (OnAttack != null)
         {
             OnAttack(this, target);
         }
 
-        //攻击造成伤害事件
+        //被攻击的卡牌减血
+        target.Damage(this, TotalAttack);
+
+        //攻击后判定事件
         if (OnDamage != null)
         {
-            OnDamage(this);
+            OnDamage(this, target);
         }
     }
 

@@ -206,13 +206,24 @@ public class BuffManager : Singleton<BuffManager>
         }
     }
 
-    public void OnAttack(MonsterCard monsterCard, MonsterCard target)
+    public void OnAttack(MonsterCard attacker, MonsterCard target)
     {
-        if (BuffDictionary.ContainsKey(monsterCard))
+        if (BuffDictionary.ContainsKey(attacker))
         {
-            foreach (var buffInstance in BuffDictionary[monsterCard])
+            foreach (var buffInstance in BuffDictionary[attacker])
             {
-                buffInstance.OnAttack(monsterCard, target, buffInstance);
+                buffInstance.OnAttack(attacker, target, buffInstance);
+            }
+        }
+    }
+
+    public void OnDamage(MonsterCard attacker, MonsterCard target)
+    {
+        if (BuffDictionary.ContainsKey(attacker))
+        {
+            foreach (var buffInstance in BuffDictionary[attacker])
+            {
+                buffInstance.OnDamage(attacker, target, buffInstance);
             }
         }
     }

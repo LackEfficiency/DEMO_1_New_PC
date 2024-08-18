@@ -19,12 +19,12 @@ public class SkillWindWalk : SkillBase
     #endregion
 
     #region 方法
-    public SkillWindWalk(string skillName, int coolDown, SpellType spellType, int MoveRange) : base(skillName, coolDown, spellType)
+    public SkillWindWalk(string skillName, int coolDown, SpellType spellType, BuffAndSkillEvent skillEvent, int MoveRange) : base(skillName, coolDown, spellType, skillEvent)
     {
         m_MoveRange = MoveRange;
     }
 
-    public override void Activate(MonsterCard monsterCard)
+    public override void Activate(MonsterCard monsterCard, SkillInstance skillInstance)
     {
         BuffBase buff = Game.Instance.BuffManager.GetBuff("MoveBoost1" + m_MoveRange.ToString());
         //当buff不存在时，报错

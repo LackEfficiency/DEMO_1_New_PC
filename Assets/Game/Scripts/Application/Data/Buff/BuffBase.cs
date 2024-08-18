@@ -53,7 +53,9 @@ public abstract class BuffBase
 
     public virtual void OnActionStart(CardActionArgs cardActionArgs, BuffInstance instance) { }
 
-    public virtual void OnTakeDamage(MonsterCard Attacker, MonsterCard self, BuffInstance instance) { }
+    public virtual void OnTakeDamage(MonsterCard attacker, MonsterCard self, BuffInstance instance) { }
+
+    public virtual void OnDamage(MonsterCard attacker, MonsterCard self, BuffInstance instance) { }
 
 
     #endregion

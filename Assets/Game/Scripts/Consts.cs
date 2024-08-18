@@ -132,6 +132,7 @@ public static class Consts
         "WindWalk4",
         "CounterBack",
         "HealAnAlly2",
+        "InitialImpact1",
     };
 }
 
@@ -212,14 +213,15 @@ public enum SpellType
 }
 
 //Buff触发机制
-public enum BuffEvent
+public enum BuffAndSkillEvent
 {
-    OnRoundStart,
-    OnRoundEnd,
+    OnActivate,
     OnDie,
     OnAttack,
+    OnDamage,
     OnTakeDamage,
     OnTakeHeal,
+    OnActionStart,
     OnActionFinish,
     OnMove,
 }

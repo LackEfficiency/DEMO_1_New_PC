@@ -52,17 +52,23 @@ public class BuffInstance
         m_BuffBase.OnActionStart(cardActionArgs, buffIntance);
     }
 
-    //行动完成时调用
-    public void OnAttack(MonsterCard monsterCard, MonsterCard target, BuffInstance buffInstance)
+    //行攻击完成时调用
+    public void OnAttack(MonsterCard attacker, MonsterCard target, BuffInstance buffInstance)
     {
-        m_BuffBase.OnAttack(monsterCard, target, buffInstance);
+        m_BuffBase.OnAttack(attacker, target, buffInstance);
     }
 
     //收到伤害时调用
     public void OnTakeDamage(MonsterCard attacker, MonsterCard self, BuffInstance buffInstance)
     {
-        m_BuffBase.OnTakeDamage(attacker,self, buffInstance);
+        m_BuffBase.OnTakeDamage(attacker, self, buffInstance);
     }   
+
+    //造成伤害时调用
+    public void OnDamage(MonsterCard attacker, MonsterCard target, BuffInstance buffInstance)
+    {
+        m_BuffBase.OnDamage(attacker, target, buffInstance);
+    }
 
     //修改剩余回合数，由其他buff或者effect触发
     public void ModifyRemainingRound(int amount)

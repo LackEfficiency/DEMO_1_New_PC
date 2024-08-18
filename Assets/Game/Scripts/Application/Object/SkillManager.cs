@@ -84,7 +84,7 @@ public class SkillManager : Singleton<SkillManager>
 
         SkillInstance newSkillInstance = new SkillInstance(skill);
         SkillDictionary[monsterCard].Add(newSkillInstance);
-        newSkillInstance.OnActivate(monsterCard);
+        newSkillInstance.OnActivate(monsterCard, newSkillInstance);
     }
 
     //传入卡牌 获取身上的所有技能
@@ -131,18 +131,29 @@ public class SkillManager : Singleton<SkillManager>
         {
             foreach (var skillInstance in SkillDictionary[monsterCard])
             {
-                skillInstance.OnActionStart(cardActionArgs);
+                skillInstance.OnActionStart(cardActionArgs, skillInstance);
             }
         }
     }
 
-    public void OnAttack(MonsterCard monsterCard, MonsterCard monsterCard2)
+    public void OnAttack(MonsterCard attacker, MonsterCard target)
     {
-        if (SkillDictionary.ContainsKey(monsterCard))
+        if (SkillDictionary.ContainsKey(attacker))
         {
-            foreach (var skillInstance in SkillDictionary[monsterCard])
+            foreach (var skillInstance in SkillDictionary[attacker])
             {
-                skillInstance.OnAttack(monsterCard, monsterCard2);
+                skillInstance.OnAttack(attacker, target, skillInstance);
+            }
+        }
+    }
+
+    public void OnDamage(MonsterCard attacker, MonsterCard target)
+    {
+        if (SkillDictionary.ContainsKey(attacker))
+        {
+            foreach (var skillInstance in SkillDictionary[attacker])
+            {
+                skillInstance.OnDamage(attacker, target, skillInstance);
             }
         }
     }
@@ -154,7 +165,7 @@ public class SkillManager : Singleton<SkillManager>
         {
             foreach (var skillInstance in SkillDictionary[monsterCard])
             {
-                skillInstance.OnActionFinish(cardActionArgs);
+                skillInstance.OnActionFinish(cardActionArgs, skillInstance);
             }
         }
     }
@@ -168,21 +179,23 @@ public class SkillManager : Singleton<SkillManager>
         switch (data.type)
         {
             case "SkillBrave":
-                return new SkillBrave(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), (int)data.value);
+                return new SkillBrave(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), Enum.Parse<BuffAndSkillEvent>(data.skillEvent), (int)data.value);
             case "SkillBleed":
-                return new SkillBleed(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), (int)data.value);
+                return new SkillBleed(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), Enum.Parse<BuffAndSkillEvent>(data.skillEvent), (int)data.value);
             case "SkillWeaken":
-                return new SkillWeaken(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), data.value);
+                return new SkillWeaken(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), Enum.Parse<BuffAndSkillEvent>(data.skillEvent), data.value);
             case "SkillGuardian":
-                return new SkillGuardian(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType));
+                return new SkillGuardian(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), Enum.Parse<BuffAndSkillEvent>(data.skillEvent));
             case "SkillStun":
-                return new SkillStun(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), (int)data.value);
+                return new SkillStun(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), Enum.Parse<BuffAndSkillEvent>(data.skillEvent), (int)data.value);
             case "SkillWindWalk":
-                return new SkillWindWalk(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), (int)data.value);
+                return new SkillWindWalk(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), Enum.Parse<BuffAndSkillEvent>(data.skillEvent), (int)data.value);
             case "SkillCounterBack":
-                return new SkillCounterBack(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType));
+                return new SkillCounterBack(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), Enum.Parse<BuffAndSkillEvent>(data.skillEvent));
             case "SkillHealAnAlly":
-                return new SkillHealAnAlly(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), (int)data.value);
+                return new SkillHealAnAlly(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), Enum.Parse<BuffAndSkillEvent>(data.skillEvent), (int)data.value);
+            case "SkillInitialImpact":
+                return new SkillInitialImpact(data.name, data.coolDown, Enum.Parse<SpellType>(data.spellType), Enum.Parse<BuffAndSkillEvent>(data.skillEvent), (int)data.value);
             // 添加其他技能类型
             default:
                 Debug.LogWarning("Unknown Skill type: " + data.type);

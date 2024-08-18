@@ -19,12 +19,12 @@ public class SkillWeaken : SkillBase
     #endregion
 
     #region 方法
-    public SkillWeaken(string skillName, int coolDown, SpellType spellType, float weakenValue) : base(skillName, coolDown, spellType)
+    public SkillWeaken(string skillName, int coolDown, SpellType spellType, BuffAndSkillEvent skillEvent, float weakenValue) : base(skillName, coolDown, spellType, skillEvent)
     {
         m_WeakenValue = weakenValue;
     }
 
-    public override void OnAttack(MonsterCard monsterCard, MonsterCard target)
+    public override void OnAttack(MonsterCard monsterCard, MonsterCard target, SkillInstance skillInstance)
     {
         //命名没有.的字符串
         BuffBase buff = Game.Instance.BuffManager.GetBuff("Weaken"+ m_WeakenValue.ToString().Replace(".", ""));
@@ -37,7 +37,7 @@ public class SkillWeaken : SkillBase
         Game.Instance.BuffManager.AddBuffToMonster(target, buff);
     }
 
-    public override void Activate(MonsterCard monsterCard)
+    public override void Activate(MonsterCard monsterCard, SkillInstance skillInstance)
     {
 
     }

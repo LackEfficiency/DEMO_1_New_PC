@@ -19,14 +19,14 @@ public class SkillBrave : SkillBase
     #endregion
 
     #region 方法
-    public SkillBrave(string skillName, int coolDown, SpellType spellType, int braveValue) : base(skillName, coolDown, spellType)
+    public SkillBrave(string skillName, int coolDown, SpellType spellType, BuffAndSkillEvent skillEvent, int braveValue) : base(skillName, coolDown, spellType, skillEvent)
     {
         m_BraveValue = braveValue;
     }
 
 
 
-    public override void Activate(MonsterCard monsterCard)
+    public override void Activate(MonsterCard monsterCard, SkillInstance skillInstance)
     {
         BuffBase buff = Game.Instance.BuffManager.GetBuff("Brave"+ m_BraveValue.ToString()+ "FromSkill");
         //当buff不存在时，报错

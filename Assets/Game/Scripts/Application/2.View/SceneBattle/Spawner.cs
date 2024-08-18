@@ -124,8 +124,7 @@ public class Spawner : View
         m_card.OnActionFinish += Game.Instance.BuffManager.OnActionFinish;
         m_card.OnActionStart += Game.Instance.BuffManager.OnActionStart;
         m_card.OnTakeDamage += Game.Instance.BuffManager.OnTakeDamage;
-
-
+        m_card.OnDamage += Game.Instance.BuffManager.OnDamage;
 
         //初始化技能
         string[] skills = m_card.MonsterCardInfo.Skills.Split(' ');
@@ -146,6 +145,7 @@ public class Spawner : View
         m_card.OnActionFinish += Game.Instance.SkillManager.OnActionFinish;
         m_card.OnAttack += Game.Instance.SkillManager.OnAttack;
         m_card.OnActionStart += Game.Instance.SkillManager.OnActionStart;
+        m_card.OnDamage += Game.Instance.SkillManager.OnDamage;
 
         Vector3 pos = m_Map.GetPosition(tile);
         m_card.transform.position = pos;

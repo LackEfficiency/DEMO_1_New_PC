@@ -5,6 +5,7 @@
       "name": "Brave1",
       "coolDown": -1,
       "spellType": "Self",
+      "skillEvent": "OnActivate",
       "value": 1.0
     },
     {
@@ -12,6 +13,7 @@
       "name": "Bleed1",
       "coolDown": -1,
       "spellType": "Enemy",
+      "skillEvent": "OnAttack",
       "value": 1.0
     },
     {
@@ -19,40 +21,54 @@
       "name": "Weaken05",
       "coolDown": -1,
       "spellType": "Enemy",
+      "skillEvent": "OnAttack",
       "value": 0.5
     },
     {
       "type": "SkillGuardian",
       "name": "Guardian",
       "coolDown": -1,
-      "spellType": "Self"
+      "spellType": "Self",
+      "skillEvent": "OnActivate"
     },
     {
       "type": "SkillStun",
       "name": "Stun1",
       "coolDown": -1,
       "spellType": "Enemy",
-      "value": 1.0
+      "value": 1.0,
+      "skillEvent": "OnAttack"
     },
     {
       "type": "SkillWindWalk",
       "name": "WindWalk4",
       "coolDown": 100,
       "spellType": "Self",
-      "value": 4.0
+      "value": 4.0,
+      "skillEvent": "OnActivate"
     },
     {
       "type": "SkillCounterBack",
       "name": "CounterBack",
       "coolDown": -1,
-      "spellType": "Self"
+      "spellType": "Self",
+      "skillEvent": "OnActivate"
     },
     {
       "type": "SkillHealAnAlly",
       "name": "HealAnAlly2",
       "coolDown": -1,
       "spellType": "Self",
-      "value": 2.0
+      "value": 2.0,
+      "skillEvent": "OnActionStart"
+    },
+    {
+      "type": "SkillInitialImpact",
+      "name": "InitialImpact1",
+      "coolDown": -1,
+      "spellType": "Self",
+      "value": 1.0,
+      "skillEvent": "OnDamage"
     }
   ]
 }

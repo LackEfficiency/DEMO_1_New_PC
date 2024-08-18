@@ -19,17 +19,17 @@ public class SkillStun : SkillBase
     #endregion
 
     #region 方法
-    public SkillStun(string skillName, int coolDown, SpellType spellType, int stunValue) : base(skillName, coolDown, spellType)
+    public SkillStun(string skillName, int coolDown, SpellType spellType, BuffAndSkillEvent skillEvent, int stunValue) : base(skillName, coolDown, spellType, skillEvent)
     {
         m_StunValue = stunValue;
     }
 
-    public override void Activate(MonsterCard monsterCard)
+    public override void Activate(MonsterCard monsterCard, SkillInstance skillInstance)
     {
 
     }
 
-    public override void OnAttack(MonsterCard monsterCard, MonsterCard target)
+    public override void OnAttack(MonsterCard monsterCard, MonsterCard target, SkillInstance skillInstance)
     {
         BuffBase buff = Game.Instance.BuffManager.GetBuff("Stun" + m_StunValue.ToString());
         //当buff不存在时，报错

@@ -18,12 +18,12 @@ public class SkillGuardian : SkillBase
     #endregion
 
     #region 方法
-    public SkillGuardian(string skillName, int coolDown, SpellType spellType) : base(skillName, coolDown, spellType)
+    public SkillGuardian(string skillName, int coolDown, SpellType spellType, BuffAndSkillEvent skillEvent) : base(skillName, coolDown, spellType, skillEvent)
     {
 
     }
 
-    public override void Activate(MonsterCard monsterCard)
+    public override void Activate(MonsterCard monsterCard, SkillInstance skillInstance)
     {
         BuffBase buff = Game.Instance.BuffManager.GetBuff("Guardian" + "FromSkill");
         //当buff不存在时，报错

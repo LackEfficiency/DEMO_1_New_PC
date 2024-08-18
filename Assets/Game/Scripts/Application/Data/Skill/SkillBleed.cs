@@ -21,13 +21,13 @@ public class SkillBleed : SkillBase
     #endregion
 
     #region 方法
-    public SkillBleed(string skillName, int coolDown, SpellType spellType, int bleedValue) : base(skillName, coolDown, spellType)
+    public SkillBleed(string skillName, int coolDown, SpellType spellType, BuffAndSkillEvent skillEvent, int bleedValue) : base(skillName, coolDown, spellType, skillEvent)
     {
         m_BleedValue = bleedValue;
     }
 
 
-    public override void OnAttack(MonsterCard monsterCard, MonsterCard target)
+    public override void OnAttack(MonsterCard monsterCard, MonsterCard target, SkillInstance skillInstance)
     {
         BuffBase buff = Game.Instance.BuffManager.GetBuff("Bleed" + m_BleedValue.ToString());
         //当buff不存在时，报错
@@ -39,7 +39,7 @@ public class SkillBleed : SkillBase
         Game.Instance.BuffManager.AddBuffToMonster(target, buff);
     }
 
-    public override void Activate(MonsterCard monsterCard)
+    public override void Activate(MonsterCard monsterCard, SkillInstance skillInstance)
     {
 
     }

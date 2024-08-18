@@ -5,7 +5,7 @@ monster,2,dog,3,5,2,Bleed1
 monster,3,caster,2,6,2,
 monster,4,Knight,2,10,2,Guardian
 monster,5,GiantHammerWarrior,3,12,2,Stun1
-monster,6,Assassin,1,6,2,WindWalk4
+monster,6,Assassin,1,6,2,WindWalk4 InitialImpact1
 monster,7,Revenger,3,6,2,CounterBack
 monster,8,Priest,2,8,2,HealAnAlly2
 #,编号,卡名,效果,类型,回合数,

@@ -19,17 +19,17 @@ public class SkillHealAnAlly : SkillBase
     #endregion
 
     #region 方法
-    public SkillHealAnAlly(string skillName, int coolDown, SpellType spellType, int healValue) : base(skillName, coolDown, spellType)
+    public SkillHealAnAlly(string skillName, int coolDown, SpellType spellType, BuffAndSkillEvent skillEvent, int healValue) : base(skillName, coolDown, spellType, skillEvent)
     {
         m_HealValue = healValue;
     }
 
-    public override void Activate(MonsterCard monsterCard)
+    public override void Activate(MonsterCard monsterCard, SkillInstance skillInstance)
     {
 
     }
 
-    public override void OnActionStart(CardActionArgs cardActionArgs)
+    public override void OnActionStart(CardActionArgs cardActionArgs, SkillInstance skillInstance)
     {
         MonsterCard target = Tools.GetLowestHp(cardActionArgs.selfCardsOnField);
         target.Heal(cardActionArgs.self, m_HealValue);

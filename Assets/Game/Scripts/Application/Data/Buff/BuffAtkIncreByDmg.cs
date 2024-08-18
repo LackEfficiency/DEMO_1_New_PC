@@ -48,7 +48,7 @@ public class BuffAtkIncreByDmg : BuffBase
     #endregion
 
     #region 事件回调
-    public override void OnAttack(MonsterCard monsterCard, MonsterCard target, BuffInstance instance)
+    public override void OnDamage(MonsterCard monsterCard, MonsterCard target, BuffInstance instance)
     {
         //每完成一次攻击，增加攻击力
         monsterCard.IncreaseDamage(m_AtkIncre);
